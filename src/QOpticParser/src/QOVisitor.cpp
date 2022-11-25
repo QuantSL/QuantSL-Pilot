@@ -1,5 +1,6 @@
 #include "QOVisitor.h"
 #include <string>
+#include <iostream>
 
 antlrcpp::Any qoptic::QOVisitor::visitParameters(QOParser::ParametersContext *ctx) {
   for (auto parameter : ctx->elements) {
@@ -9,10 +10,16 @@ antlrcpp::Any qoptic::QOVisitor::visitParameters(QOParser::ParametersContext *ct
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qoptic::QOVisitor::visitSimpleDefinition(qoptic::QOParser::SimpleDefinitionContext *ctx) {
-  for (auto object : ctx->objects) {
-    _objects.push_back(object->getText());
+antlrcpp::Any qoptic::QOVisitor::visitIndices(QOParser::IndicesContext *ctx) {
+  for (auto index : ctx->elements) {
+    _indices.push_back(index->getText());
   }
+
+  return visitChildren(ctx);
+}
+
+antlrcpp::Any qoptic::QOVisitor::visitSimpleDefinition(qoptic::QOParser::SimpleDefinitionContext *ctx) {
+  _objects.push_back(ctx->object->getText());
 
   for (auto definition : ctx->definitions) {
     _objectDefinitions.push_back(definition->getText());
@@ -22,9 +29,7 @@ antlrcpp::Any qoptic::QOVisitor::visitSimpleDefinition(qoptic::QOParser::SimpleD
 }
 
 antlrcpp::Any qoptic::QOVisitor::visitIndexedDefinition(qoptic::QOParser::IndexedDefinitionContext *ctx) {
-  for (auto object : ctx->objects) {
-    _indexObjects.push_back(object->getText());
-  }
+  _indexObjects.push_back(ctx->object->getText());
 
   std::vector<std::string> indices;
   for (auto index : ctx->botindex()->elements) {

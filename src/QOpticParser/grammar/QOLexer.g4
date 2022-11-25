@@ -12,6 +12,7 @@ WS      : ([ \t]+ | '\\' ' '* NEWLINE) -> skip;
 // Keywords
 PARAMETER : 'parameter';
 SUM       : 'sum';
+INDEX     : 'index';
 
 // Mathematical constructs
 EQUAL : '=';

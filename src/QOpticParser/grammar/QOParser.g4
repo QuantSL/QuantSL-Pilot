@@ -6,17 +6,20 @@ options {
 
 main : (line)* EOF;
 
-line : parameterLine | definitionLine | NEWLINE;
+line : parameterLine | indexLine | definitionLine | NEWLINE;
 
 parameterLine : PARAMETER parameters NEWLINE?;
 parameters    : elements+=SYMBOLNAME (COMMA elements+=SYMBOLNAME)*;
 
+indexLine : INDEX indices NEWLINE?;
+indices   : elements+=SYMBOLNAME (COMMA elements+=SYMBOLNAME)*;
+
 definitionLine    : simpleDefinition | indexedDefinition;
-simpleDefinition  : objects+=SYMBOLNAME          EQUAL definitions+=expression NEWLINE?;
-indexedDefinition : objects+=SYMBOLNAME botindex EQUAL definitions+=expression NEWLINE?;
+simpleDefinition  : object=SYMBOLNAME          EQUAL definitions+=expression NEWLINE?;
+indexedDefinition : object=SYMBOLNAME botindex EQUAL definitions+=expression NEWLINE?;
 
 expression        : sign? (SYMBOLNAME botindex? | sumexpression) (artimethic (SYMBOLNAME botindex? | sumexpression))*;
-sumexpression     : SUM boundaries+=sumindices
+sumexpression     : SUM boundary=sumindices
 										ARGOPEN
 											sign? SYMBOLNAME botindex? (artimethic (SYMBOLNAME botindex?))*
 										ARGCLOSE;

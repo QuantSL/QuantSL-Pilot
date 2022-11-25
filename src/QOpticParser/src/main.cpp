@@ -22,6 +22,11 @@ int main(int argc, const char* argv[]) {
     std::cout << parameter << std::endl;
   }
 
+  std::cout << "\nParsed indicies:\n";
+  for(auto parameter : qovisitor.getIndices()) {
+    std::cout << parameter << std::endl;
+  }
+
   std::cout << "\nParsed definitions:\n";
   for(auto object : qovisitor.getObjects()) {
     std::cout << object << std::endl;

@@ -1,6 +1,7 @@
 # I am Comment
 
 parameter N, Ω, J, U_{int}
+index a, b
 
 H_{int} = Test
 n_i = σz_i
