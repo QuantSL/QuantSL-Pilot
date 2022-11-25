@@ -6,29 +6,27 @@ options {
 
 main : (line)* EOF;
 
-line : parameterLine | indexLine | definitionLine | NEWLINE;
+line : parameterLine | subsystemLine | definitionLine | NEWLINE;
 
 parameterLine : PARAMETER parameters NEWLINE?;
 parameters    : elements+=SYMBOLNAME (COMMA elements+=SYMBOLNAME)*;
 
-indexLine : INDEX indices NEWLINE?;
-indices   : elements+=SYMBOLNAME (COMMA elements+=SYMBOLNAME)*;
+subsystemLine : SUBSYSTEM subsystems NEWLINE?;
+subsystems    : elements+=SYMBOLNAME (COMMA elements+=SYMBOLNAME)*;
 
 definitionLine    : simpleDefinition | indexedDefinition;
 simpleDefinition  : object=SYMBOLNAME          EQUAL definitions+=expression NEWLINE?;
 indexedDefinition : object=SYMBOLNAME botindex EQUAL definitions+=expression NEWLINE?;
 
-expression        : sign? (SYMBOLNAME botindex? | sumexpression) (artimethic (SYMBOLNAME botindex? | sumexpression))*;
-sumexpression     : SUM boundary=sumindices
-										ARGOPEN
-											sign? SYMBOLNAME botindex? (artimethic (SYMBOLNAME botindex?))*
-										ARGCLOSE;
+expression           : (arithmeticexpression | sumexpression) (artimethic (arithmeticexpression | sumexpression))*;
+sumexpression        : SUM boundary=sumindices ARGOPEN arithmeticexpression ARGCLOSE;
+arithmeticexpression : sign? SYMBOLNAME botindex? (artimethic (SYMBOLNAME botindex?))*;
 
 sumindices        : botindex topindex;
-botindex          : USCORE           elements+=SYMBOLNAME
-									| USCORE INDEXOPEN elements+=SYMBOLNAME (COMMA elements+=SYMBOLNAME)* INDEXCLOSE;
-topindex          : CARET            elements+=SYMBOLNAME
-									| CARET  INDEXOPEN elements+=SYMBOLNAME (COMMA elements+=SYMBOLNAME)* INDEXCLOSE;
+botindex          : USCORE           indices+=SYMBOLNAME
+									| USCORE INDEXOPEN indices+=SYMBOLNAME (COMMA indices+=SYMBOLNAME)* INDEXCLOSE;
+topindex          : CARET            indices+=SYMBOLNAME
+									| CARET  INDEXOPEN indices+=SYMBOLNAME (COMMA indices+=SYMBOLNAME)* INDEXCLOSE;
 
 sign							: ADD | SUB;
 artimethic				: ADD | SUB | MUL | DIV | CARET;

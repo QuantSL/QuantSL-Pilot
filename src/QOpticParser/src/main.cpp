@@ -22,8 +22,8 @@ int main(int argc, const char* argv[]) {
     std::cout << parameter << std::endl;
   }
 
-  std::cout << "\nParsed indicies:\n";
-  for(auto parameter : qovisitor.getIndices()) {
+  std::cout << "\nParsed subsystems:\n";
+  for(auto parameter : qovisitor.getSubsystems()) {
     std::cout << parameter << std::endl;
   }
 

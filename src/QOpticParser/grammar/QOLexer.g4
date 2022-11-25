@@ -12,7 +12,7 @@ WS      : ([ \t]+ | '\\' ' '* NEWLINE) -> skip;
 // Keywords
 PARAMETER : 'parameter';
 SUM       : 'sum';
-INDEX     : 'index';
+SUBSYSTEM : 'subsystem';
 
 // Mathematical constructs
 EQUAL : '=';
@@ -38,7 +38,6 @@ ARGCLOSE       : ')';
 // Sigma : ('σ' | 'sigma') ('x' | 'y' | 'z' | '⁺' | '⁻') INDEX;
 // fragment INDEX : '_' [a-z];
 
-// TODO: right now SYMBOLNAME clashes with too many things, I have to find a more generic solution
 SYMBOLNAME : UNICODENAME SUBSCRIPTNAME?;
 fragment UNICODENAME : UNICODELETTER UNICODESYMBOL*;
 fragment UNICODELETTER : [a-zA-Z\u0391-\u03C9];     // Include greek symbols

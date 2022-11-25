@@ -1,12 +1,13 @@
 # I am Comment
 
 parameter N, Ω, J, U_{int}
-index a, b
+subsystem a, b
 
 H_{int} = Test
 n_i = σz_i
 n_[i, j] = σz_i * σz_j
 
 H = H_{int} + U_{int} * sum_[i,j]^N(n_[i, j])
+H_{test}_i = sum_j^N(n_[i, j])
 
 # This is comment
