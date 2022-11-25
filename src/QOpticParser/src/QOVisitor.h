@@ -17,7 +17,7 @@ private:
   std::vector<std::string> _indexObjectDefinitions;
   std::vector<std::vector<std::string>> _indicesRegister;
 
-public:    
+public:
   antlrcpp::Any visitParameters(       qoptic::QOParser::ParametersContext        *ctx);
   antlrcpp::Any visitSimpleDefinition( qoptic::QOParser::SimpleDefinitionContext  *ctx);
   antlrcpp::Any visitIndexedDefinition(qoptic::QOParser::IndexedDefinitionContext *ctx);

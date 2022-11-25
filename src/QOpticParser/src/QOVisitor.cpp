@@ -27,7 +27,7 @@ antlrcpp::Any qoptic::QOVisitor::visitIndexedDefinition(qoptic::QOParser::Indexe
   }
 
   std::vector<std::string> indices;
-  for (auto index : ctx->index()->elements) {
+  for (auto index : ctx->botindex()->elements) {
     indices.push_back(index->getText());
   }
   _indicesRegister.push_back(indices);
