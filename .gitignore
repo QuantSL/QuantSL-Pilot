@@ -9,6 +9,10 @@ plots
 notebooks
 _research
 
+src/QOpticParser/build/antlr4_runtime
+src/QOpticParser/build/CMakeFiles
+src/QOpticParser/grammar/.antlr
+
 ################################################################################
 #                                    Julia                                     #
 ################################################################################
