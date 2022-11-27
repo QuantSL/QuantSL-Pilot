@@ -15,7 +15,14 @@ int main(int argc, const char* argv[]) {
   qoptic::QOParser parser(&tokens);
 
   qoptic::QOVisitor qovisitor;
-  qovisitor.visitMain(parser.main());
+  try {
+    qovisitor.visitMain(parser.main());
+  }
+  catch(const std::exception& e) {
+    std::cerr << e.what() << '\n';
+    return -1;
+  }
+  
 
   std::cout << "Parsed parameters:\n";
   for(auto parameter : qovisitor.getParameters()) {

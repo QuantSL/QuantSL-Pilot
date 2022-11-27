@@ -8,6 +8,8 @@ namespace qoptic {
 
 class  QOVisitor : public qoptic::QOParserBaseVisitor {
 private:
+  int _lineNumber = 0;
+  
   std::vector<std::string> _parameters;
   std::vector<std::string> _subsystems;
 
@@ -17,10 +19,11 @@ private:
   std::vector<std::string> _indexObjects;
   std::vector<std::string> _indexObjectDefinitions;
   std::vector<std::vector<std::string>> _indicesRegister;
-  
+
   std::vector<std::string> _currentIndices;
 
 public:
+  antlrcpp::Any visitLine(QOParser::LineContext *ctx) { _lineNumber++; return visitChildren(ctx); }
   antlrcpp::Any visitParameters(          qoptic::QOParser::ParametersContext           *ctx);
   antlrcpp::Any visitSubsystems(          qoptic::QOParser::SubsystemsContext           *ctx);
   antlrcpp::Any visitSimpleDefinition(    qoptic::QOParser::SimpleDefinitionContext     *ctx);

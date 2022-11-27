@@ -6,7 +6,7 @@ channels { CommentsChannel }
 // Rudimentary comment and line handling
 NEWLINE   : '\r'? '\n';
 
-Comment : '#' ~[\r\n]* NEWLINE? -> channel(CommentsChannel);
+Comment : '#' ~[\r\n]* -> channel(CommentsChannel);
 WS      : ([ \t]+ | '\\' ' '* NEWLINE) -> skip;
 
 // Keywords

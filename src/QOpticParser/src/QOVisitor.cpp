@@ -38,7 +38,7 @@ antlrcpp::Any qoptic::QOVisitor::visitIndexedDefinition(qoptic::QOParser::Indexe
   for (auto index : ctx->botindex()->indices) {
     _currentIndices.push_back(index->getText());
   }
-  _indicesRegister.push_back(_currentIndices); // TODO: test first whether index does not already appear in subsystem list
+  _indicesRegister.push_back(_currentIndices);
 
   for (auto definition : ctx->definitions) {
     _indexObjectDefinitions.push_back(definition->getText());
@@ -48,8 +48,18 @@ antlrcpp::Any qoptic::QOVisitor::visitIndexedDefinition(qoptic::QOParser::Indexe
 }
 
 antlrcpp::Any qoptic::QOVisitor::visitArithmeticexpression(qoptic::QOParser::ArithmeticexpressionContext *ctx) {
-  // Sanity check: all indices must be defined by either the generic index-list or the currently required indices
-  // TODO: implement
+  for (auto botIndeces : ctx->botindex()) {
+    for (auto index : botIndeces->indices) { 
+      std::string indexName = index->getText();
+      if ( !std::any_of(_currentIndices.begin(), _currentIndices.end(), [&](auto comp) { return indexName==comp; })
+        && !std::any_of(_subsystems.begin(),     _subsystems.end(),     [&](auto comp) { return indexName==comp; }) ) {
+        throw std::invalid_argument(
+          "Index error at line " + std::to_string(_lineNumber) + " in expression:\n" + ctx->getText() + "\n" +
+          "Index '" + indexName + "' is not defined."
+        );
+      }
+    }
+  }
 
   return visitChildren(ctx);
 }
@@ -61,7 +71,8 @@ antlrcpp::Any qoptic::QOVisitor::visitSumexpression(qoptic::QOParser::Sumexpress
     std::string indexName = index->getText();
     if ( std::any_of(_currentIndices.begin(), _currentIndices.end(), [&](auto comp) { return indexName==comp; }) ) {
       throw std::invalid_argument(
-        "Index used multiple times. '" + indexName + "' already occurs as a sum index or in the definition."
+        "Index used multiple times at line " + std::to_string(_lineNumber) + ".\n" +
+        "Summation index '" + indexName + "' already occurs in the object definition."
       );
     }
     _currentIndices.push_back(indexName);
