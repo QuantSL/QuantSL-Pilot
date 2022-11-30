@@ -5,24 +5,23 @@
 #include "StringTools.h"
 
 std::string qoptic::_generateParameterCheck(qoptic::QOVisitor &visitor) {
-  std::string checkParameters = "\tfor parameter in [" +
+  return std::string("\tfor parameter in [" +
     separateByComma(toSymbol(stripCurlyBraces(visitor.getParameters()))) +
-    "]# Check if all parameters are defined\n";
-  checkParameters += "\t\t!haskey(parameters, parameter) && error(\"Parameter $parameter not defined\")\n";
-  checkParameters += "\tend\n\n";
-  return checkParameters;
+    "] # Check if all parameters are defined\n"
+    "\t\t!haskey(parameters, parameter) && error(\"Parameter $parameter not defined\")\n"
+    "\tend\n\n");
 }
 
 std::string qoptic::_generateOperatorContainer(QOVisitor &visitor) {
-  std::string results = "struct OperatorContainer\n";
+  std::string container = "struct OperatorContainer\n";
   for (auto operatorName : visitor.getOperators()) {
-    results += "\t" + stripCurlyBraces(operatorName) + "\n";
+    container += "\t" + stripCurlyBraces(operatorName) + "\n";
   }
   for (auto operatorName : visitor.getIndexedOperators()) {
-    results += "\t" + stripCurlyBraces(operatorName) + "\n";
+    container += "\t" + stripCurlyBraces(operatorName) + "\n";
   }
-  results += "end\n\n";
-  return results;
+  container += "end\n\n";
+  return container;
 }
 
 std::string qoptic::_generateBasis() {
