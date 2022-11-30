@@ -18,9 +18,10 @@ definitionLine    : simpleDefinition | indexedDefinition;
 simpleDefinition  : object=SYMBOLNAME          EQUAL definitions+=expression NEWLINE?;
 indexedDefinition : object=SYMBOLNAME botindex EQUAL definitions+=expression NEWLINE?;
 
-expression           : (arithmeticexpression | sumexpression) (artimethic (arithmeticexpression | sumexpression))*;
-sumexpression        : SUM boundary=sumindices ARGOPEN expression ARGCLOSE;
-arithmeticexpression : sign? name=SYMBOLNAME botindex? (artimethic (SYMBOLNAME botindex?))*;
+expression           : (arithmeticExpression | sumExpression) (arithmethic (arithmeticExpression | sumExpression))*;
+sumExpression        : SUM boundary=sumindices ARGOPEN expression ARGCLOSE;
+arithmeticExpression : sign? elementaryExpression (arithmethic elementaryExpression)*;
+elementaryExpression : (name=SYMBOLNAME botindex?) | (ARGOPEN expression ARGCLOSE);
 
 sumindices        : botindex topindex;
 // TODO: add support for interger indices
@@ -30,4 +31,4 @@ topindex          : CARET               index=SYMBOLNAME
 									| CARET  INDEXOPEN    index=SYMBOLNAME INDEXCLOSE;
 
 sign							: ADD | SUB;
-artimethic				: ADD | SUB | MUL | DIV | CARET;
+arithmethic				: ADD | SUB | MUL | DIV | CARET;

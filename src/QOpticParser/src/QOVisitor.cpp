@@ -64,39 +64,40 @@ antlrcpp::Any qoptic::QOVisitor::visitIndexedDefinition(qoptic::QOParser::Indexe
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qoptic::QOVisitor::visitArithmeticexpression(qoptic::QOParser::ArithmeticexpressionContext *ctx) {
-  for (auto botIndices : ctx->botindex()) {
-    std::vector<std::string> indices;
+antlrcpp::Any qoptic::QOVisitor::visitElementaryExpression(qoptic::QOParser::ElementaryExpressionContext *ctx) {
+  // Leave early if we have a bracketed expression or not an indexed expression
+  if ( ctx->name == nullptr || ctx->botindex() == nullptr ) return visitChildren(ctx);
 
-    // Sanitise input, then add to indices
-    for (auto index : botIndices->indices) { 
-      std::string indexName = index->getText();
-      // TODO: Check if index is just a number
-      if ( !contains(_currentIndices, indexName) && !contains(_subsystems, indexName) ) {
-        throw std::invalid_argument(
-          "Index error at line " + std::to_string(_lineNumber) + " in expression:\n" + ctx->getText() + "\n" +
-          "Index '" + indexName + "' is not defined."
-        );
-      }
+  std::vector<std::string> indices;
 
-      indices.push_back(qoptic::formatIndex(_subsystems, indexName));
-    }
-
-    std::string objectName = ctx->name->getText();
-    if ( contains(elementaryOperators,  objectName) ) _currentTreeContext->addChildIndices(indices);
-    else if ( contains(_indexedOperators, objectName ) ) _currentTreeContext->addChildOperator(objectName, indices);
-    else if ( !contains(_operators, objectName ) ) {
+  // Sanitise input, then add to indices
+  for (auto index : ctx->botindex()->indices) { 
+    std::string indexName = index->getText();
+    // TODO: Check if index is just a number
+    if ( !contains(_currentIndices, indexName) && !contains(_subsystems, indexName) ) {
       throw std::invalid_argument(
-        "Object error at line " + std::to_string(_lineNumber) + " in expression:\n" + ctx->getText() + "\n" +
-        "Object '" + ctx->name->getText() + "' is not defined."
+        "Index error at line " + std::to_string(_lineNumber) + " in expression:\n" + ctx->getText() + "\n" +
+        "Index '" + indexName + "' is not defined."
       );
     }
+
+    indices.push_back(qoptic::formatIndex(_subsystems, indexName));
+  }
+
+  std::string objectName = ctx->name->getText();
+  if ( contains(elementaryOperators,  objectName) ) _currentTreeContext->addChildIndices(indices);
+  else if ( contains(_indexedOperators, objectName ) ) _currentTreeContext->addChildOperator(objectName, indices);
+  else if ( !contains(_operators, objectName ) ) {
+    throw std::invalid_argument(
+      "Object error at line " + std::to_string(_lineNumber) + " in expression:\n" + ctx->getText() + "\n" +
+      "Object '" + ctx->name->getText() + "' is not defined."
+    );
   }
 
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qoptic::QOVisitor::visitSumexpression(qoptic::QOParser::SumexpressionContext *ctx) {
+antlrcpp::Any qoptic::QOVisitor::visitSumExpression(qoptic::QOParser::SumExpressionContext *ctx) {
   // Store old indices and tree context
   BaseTree* oldTreeContext = _currentTreeContext;
   std::vector<std::string> oldIndices = _currentIndices;

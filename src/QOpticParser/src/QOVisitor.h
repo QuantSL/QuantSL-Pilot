@@ -39,8 +39,8 @@ public:
   antlrcpp::Any visitSubsystems(          qoptic::QOParser::SubsystemsContext           *ctx);
   antlrcpp::Any visitSimpleDefinition(    qoptic::QOParser::SimpleDefinitionContext     *ctx);
   antlrcpp::Any visitIndexedDefinition(   qoptic::QOParser::IndexedDefinitionContext    *ctx);
-  antlrcpp::Any visitArithmeticexpression(qoptic::QOParser::ArithmeticexpressionContext *ctx);
-  antlrcpp::Any visitSumexpression(       qoptic::QOParser::SumexpressionContext        *ctx);
+  antlrcpp::Any visitElementaryExpression(qoptic::QOParser::ElementaryExpressionContext *ctx);
+  antlrcpp::Any visitSumExpression(       qoptic::QOParser::SumExpressionContext        *ctx);
 
   std::vector<std::string> getParameters()       { return _parameters; }
   std::vector<std::string> getSubsystems()       { return _subsystems; }

@@ -10,7 +10,7 @@ struct OperatorContainer
 end
 
 function _generate_indices_from_n_test(i; parameters::Dict)
-	for parameter in [:N, :J, :U_int]# Check if all parameters are defined
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
 		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
 	end
 
@@ -22,7 +22,7 @@ function _generate_indices_from_n_test(i; parameters::Dict)
 end
 
 function _generate_indices_from_n(i, j; parameters::Dict)
-	for parameter in [:N, :J, :U_int]# Check if all parameters are defined
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
 		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
 	end
 
@@ -34,7 +34,7 @@ function _generate_indices_from_n(i, j; parameters::Dict)
 end
 
 function _generate_indices_from_H_onsite(; parameters::Dict)
-	for parameter in [:N, :J, :U_int]# Check if all parameters are defined
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
 		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
 	end
 
@@ -49,7 +49,7 @@ function _generate_indices_from_H_onsite(; parameters::Dict)
 end
 
 function _generate_indices_from_H_int(; parameters::Dict)
-	for parameter in [:N, :J, :U_int]# Check if all parameters are defined
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
 		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
 	end
 
@@ -65,14 +65,14 @@ function _generate_indices_from_H_int(; parameters::Dict)
 end
 
 function _generate_indices_from_H_lattice(; parameters::Dict)
-	for parameter in [:N, :J, :U_int]# Check if all parameters are defined
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
 		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
 	end
 
 	results = ()
 
 	for i in [1:parameters[:N];]
-		results = results..., (_generate_indices_from_n_test(i, parameters = parameters))...
+		results = results..., i
 		results = results..., (_generate_indices_from_n_test(i, parameters = parameters))...
 		results = results..., (_generate_indices_from_n_test(i, parameters = parameters))...
 	end
@@ -80,7 +80,7 @@ function _generate_indices_from_H_lattice(; parameters::Dict)
 end
 
 function _generate_indices_from_H(; parameters::Dict)
-	for parameter in [:N, :J, :U_int]# Check if all parameters are defined
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
 		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
 	end
 
@@ -90,7 +90,7 @@ function _generate_indices_from_H(; parameters::Dict)
 end
 
 function _generate_indices(; parameters::Dict)
-	for parameter in [:N, :J, :U_int]# Check if all parameters are defined
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
 		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
 	end
 
