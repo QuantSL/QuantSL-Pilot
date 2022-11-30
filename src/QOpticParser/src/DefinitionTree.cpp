@@ -13,7 +13,10 @@ std::string qoptic::SummationTree::generateIndexSampler(std::string indentation)
 
   // Sum body
   for (auto childIndices : _childrensIndices) {
-    results += indentation + "results = results..., (" + separateByComma(childIndices) + ")...\n";
+    if (childIndices.size() == 1) {
+      results += "\tresults = results..., " + childIndices[0] + "\n";
+    }
+    else results += "\tresults = results..., (" + separateByComma(childIndices) + ")\n";
   }
   for (int i = 0; i < _childrenOperators.size(); i++) {
     results += indentation + "results = results..., (_generate_indices_from_" +
@@ -40,7 +43,10 @@ std::string qoptic::DefinitionTree::generateIndexSampler(std::string parameterCh
   results += "\tresults = ()\n";
 
   for (auto childIndices : _childrensIndices) {
-    results += "\tresults = results..., (" + separateByComma(childIndices) + ")...\n";
+    if (childIndices.size() == 1) {
+      results += "\tresults = results..., " + childIndices[0] + "\n";
+    }
+    else results += "\tresults = results..., (" + separateByComma(childIndices) + ")\n";
   }
   for (int i = 0; i < _childrenOperators.size(); i++) {
     results +=  "\tresults = results..., (_generate_indices_from_" +
