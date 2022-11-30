@@ -1,14 +1,16 @@
 # I am Comment
 
-parameter N, Ω, J, U_{int}
+parameter N, J, U_{int}
 subsystem a, b
 
 # TODO: make this work H_{int} = σx_1 * σx_2
 n_{test}_i = σx_[a, i] * σx_[b, i]
 n_[i, j] = σz_i * σz_j # TODO: currently this generates the same symbol as the line above. Should I fix or forbid it?
 
-H        = H_{int} + U_{int} * sum_[i,j]^N(n_[i, j])
-H_{alt}  = H_{int} + U_{int} * sum_i^N( sum_j^N ( n_[i, j] ) )
-H_{test} = sum_i^N(n_{test}_i * n_{test}_i)
+H_{onsite}  = U_{int} * sum_[i,j]^N(n_[i, j])
+H_{int}     = J * sum_i^N( sum_j^N ( σx_i * σx_j ) )
+H_{lattice} = sum_i^N(n_{test}_i * n_{test}_i * σz_i)
+
+H = H_{onsite} + H_{int} + H_{lattice}
 
 # This is comment
