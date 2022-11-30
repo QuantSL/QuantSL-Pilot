@@ -264,6 +264,54 @@ antlr4cpp_generated_src/QOParser/QOParserVisitor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/antlr4cpp_generated_src/QOParser/QOParserVisitor.cpp.s
 .PHONY : antlr4cpp_generated_src/QOParser/QOParserVisitor.cpp.s
 
+src/DefinitionTree.o: src/DefinitionTree.cpp.o
+.PHONY : src/DefinitionTree.o
+
+# target to build an object file
+src/DefinitionTree.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/DefinitionTree.cpp.o
+.PHONY : src/DefinitionTree.cpp.o
+
+src/DefinitionTree.i: src/DefinitionTree.cpp.i
+.PHONY : src/DefinitionTree.i
+
+# target to preprocess a source file
+src/DefinitionTree.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/DefinitionTree.cpp.i
+.PHONY : src/DefinitionTree.cpp.i
+
+src/DefinitionTree.s: src/DefinitionTree.cpp.s
+.PHONY : src/DefinitionTree.s
+
+# target to generate assembly for a file
+src/DefinitionTree.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/DefinitionTree.cpp.s
+.PHONY : src/DefinitionTree.cpp.s
+
+src/QOCodeGen.o: src/QOCodeGen.cpp.o
+.PHONY : src/QOCodeGen.o
+
+# target to build an object file
+src/QOCodeGen.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOCodeGen.cpp.o
+.PHONY : src/QOCodeGen.cpp.o
+
+src/QOCodeGen.i: src/QOCodeGen.cpp.i
+.PHONY : src/QOCodeGen.i
+
+# target to preprocess a source file
+src/QOCodeGen.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOCodeGen.cpp.i
+.PHONY : src/QOCodeGen.cpp.i
+
+src/QOCodeGen.s: src/QOCodeGen.cpp.s
+.PHONY : src/QOCodeGen.s
+
+# target to generate assembly for a file
+src/QOCodeGen.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOCodeGen.cpp.s
+.PHONY : src/QOCodeGen.cpp.s
+
 src/QOVisitor.o: src/QOVisitor.cpp.o
 .PHONY : src/QOVisitor.o
 
@@ -287,6 +335,30 @@ src/QOVisitor.s: src/QOVisitor.cpp.s
 src/QOVisitor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOVisitor.cpp.s
 .PHONY : src/QOVisitor.cpp.s
+
+src/StringTools.o: src/StringTools.cpp.o
+.PHONY : src/StringTools.o
+
+# target to build an object file
+src/StringTools.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/StringTools.cpp.o
+.PHONY : src/StringTools.cpp.o
+
+src/StringTools.i: src/StringTools.cpp.i
+.PHONY : src/StringTools.i
+
+# target to preprocess a source file
+src/StringTools.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/StringTools.cpp.i
+.PHONY : src/StringTools.cpp.i
+
+src/StringTools.s: src/StringTools.cpp.s
+.PHONY : src/StringTools.s
+
+# target to generate assembly for a file
+src/StringTools.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/StringTools.cpp.s
+.PHONY : src/StringTools.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -336,9 +408,18 @@ help:
 	@echo "... antlr4cpp_generated_src/QOParser/QOParserVisitor.o"
 	@echo "... antlr4cpp_generated_src/QOParser/QOParserVisitor.i"
 	@echo "... antlr4cpp_generated_src/QOParser/QOParserVisitor.s"
+	@echo "... src/DefinitionTree.o"
+	@echo "... src/DefinitionTree.i"
+	@echo "... src/DefinitionTree.s"
+	@echo "... src/QOCodeGen.o"
+	@echo "... src/QOCodeGen.i"
+	@echo "... src/QOCodeGen.s"
 	@echo "... src/QOVisitor.o"
 	@echo "... src/QOVisitor.i"
 	@echo "... src/QOVisitor.s"
+	@echo "... src/StringTools.o"
+	@echo "... src/StringTools.i"
+	@echo "... src/StringTools.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

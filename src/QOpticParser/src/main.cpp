@@ -4,6 +4,7 @@
 #include "QOParser.h"
 
 #include "QOVisitor.h"
+#include "QOCodeGen.h"
 
 int main(int argc, const char* argv[]) {
   std::ifstream stream;
@@ -23,7 +24,6 @@ int main(int argc, const char* argv[]) {
     return -1;
   }
   
-
   std::cout << "Parsed parameters:\n";
   for(auto parameter : qovisitor.getParameters()) {
     std::cout << parameter << std::endl;
@@ -35,14 +35,16 @@ int main(int argc, const char* argv[]) {
   }
 
   std::cout << "\nParsed definitions:\n";
-  for(auto object : qovisitor.getObjects()) {
+  for(auto object : qovisitor.getOperatorsDebug()) {
     std::cout << object << std::endl;
   }
 
   std::cout << "\nParsed indexed definitions:\n";
-  for(auto object : qovisitor.getIndexObjects()) {
+  for(auto object : qovisitor.getIndexedOperatorsDebug()) {
     std::cout << object << std::endl;
   }
+
+  qoptic::generateCode("../../QuantumOpticsTest.jl", qovisitor);
 
   return 0;
 }
