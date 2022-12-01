@@ -31,6 +31,7 @@ int qoptic::generateCode(std::string filename, QOParser &parser) {
   // file << _generateOperatorContainer(visitor);
 
   // Generate code to sample indices from each definition
+  parser.reset();
   QOIndexVisitor indexVisitor;
   try {
     indexVisitor.visitMain(parser.main());
