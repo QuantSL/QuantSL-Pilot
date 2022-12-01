@@ -3,14 +3,14 @@
 #include <string>
 
 #include <antlr4-runtime.h>
-#include "QOVisitor.h"
+#include "QOParser.h"
 
 namespace qoptic {
 
-std::string _generateParameterCheck(QOVisitor &visitor);
-std::string _generateOperatorContainer(QOVisitor &visitor);
+std::string _generateParameterCheck(QOParser &parser);
+std::string _generateOperatorContainer(QOParser &parser);
 std::string _generateBasis();
   
-void generateCode(std::string filename, QOVisitor &visitor);
+int generateCode(std::string filename, QOParser &parser);
 
 } // namespace qoptic

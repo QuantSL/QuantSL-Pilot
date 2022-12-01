@@ -312,6 +312,54 @@ src/QOCodeGen.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOCodeGen.cpp.s
 .PHONY : src/QOCodeGen.cpp.s
 
+src/QODefinitionVisitor.o: src/QODefinitionVisitor.cpp.o
+.PHONY : src/QODefinitionVisitor.o
+
+# target to build an object file
+src/QODefinitionVisitor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QODefinitionVisitor.cpp.o
+.PHONY : src/QODefinitionVisitor.cpp.o
+
+src/QODefinitionVisitor.i: src/QODefinitionVisitor.cpp.i
+.PHONY : src/QODefinitionVisitor.i
+
+# target to preprocess a source file
+src/QODefinitionVisitor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QODefinitionVisitor.cpp.i
+.PHONY : src/QODefinitionVisitor.cpp.i
+
+src/QODefinitionVisitor.s: src/QODefinitionVisitor.cpp.s
+.PHONY : src/QODefinitionVisitor.s
+
+# target to generate assembly for a file
+src/QODefinitionVisitor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QODefinitionVisitor.cpp.s
+.PHONY : src/QODefinitionVisitor.cpp.s
+
+src/QOIndexVisitor.o: src/QOIndexVisitor.cpp.o
+.PHONY : src/QOIndexVisitor.o
+
+# target to build an object file
+src/QOIndexVisitor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOIndexVisitor.cpp.o
+.PHONY : src/QOIndexVisitor.cpp.o
+
+src/QOIndexVisitor.i: src/QOIndexVisitor.cpp.i
+.PHONY : src/QOIndexVisitor.i
+
+# target to preprocess a source file
+src/QOIndexVisitor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOIndexVisitor.cpp.i
+.PHONY : src/QOIndexVisitor.cpp.i
+
+src/QOIndexVisitor.s: src/QOIndexVisitor.cpp.s
+.PHONY : src/QOIndexVisitor.s
+
+# target to generate assembly for a file
+src/QOIndexVisitor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOIndexVisitor.cpp.s
+.PHONY : src/QOIndexVisitor.cpp.s
+
 src/QOVisitor.o: src/QOVisitor.cpp.o
 .PHONY : src/QOVisitor.o
 
@@ -414,6 +462,12 @@ help:
 	@echo "... src/QOCodeGen.o"
 	@echo "... src/QOCodeGen.i"
 	@echo "... src/QOCodeGen.s"
+	@echo "... src/QODefinitionVisitor.o"
+	@echo "... src/QODefinitionVisitor.i"
+	@echo "... src/QODefinitionVisitor.s"
+	@echo "... src/QOIndexVisitor.o"
+	@echo "... src/QOIndexVisitor.i"
+	@echo "... src/QOIndexVisitor.s"
 	@echo "... src/QOVisitor.o"
 	@echo "... src/QOVisitor.i"
 	@echo "... src/QOVisitor.s"

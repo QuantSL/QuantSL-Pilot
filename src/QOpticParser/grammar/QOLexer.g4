@@ -14,6 +14,10 @@ PARAMETER : 'parameter';
 SUM       : 'sum';
 SUBSYSTEM : 'subsystem';
 
+// Elementary Operators
+// TODO: let the elementary operators be defined by the user, by 'using Spin(1//2)' for example
+SIGMA : ('σ' | 'sigma') ('x' | 'y' | 'z' | '⁺' | '⁻');
+
 // Mathematical constructs
 EQUAL : '=';
 COMMA : ',';
@@ -34,9 +38,6 @@ ARGOPEN        : '(';
 ARGCLOSE       : ')';
 
 // Unicode Names and fragments
-
-// Sigma : ('σ' | 'sigma') ('x' | 'y' | 'z' | '⁺' | '⁻') INDEX;
-// fragment INDEX : '_' [a-z];
 
 SYMBOLNAME : UNICODENAME SUBSCRIPTNAME?;
 fragment UNICODENAME : UNICODELETTER UNICODESYMBOL*;

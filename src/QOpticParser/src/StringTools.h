@@ -14,8 +14,12 @@ std::string separateByComma(std::vector<std::string> strings);
 
 std::vector<std::string> stripCurlyBraces(std::vector<std::string> strings);
 std::string stripCurlyBraces(std::string string);
+void stripCurlyBracesInPlace(std::string &string);
 
 std::vector<std::string> toSymbol(std::vector<std::string> strings);
 std::string toSymbol(std::string string);
+
+void tokenizeSummations(std::string &expression);
+void insertSpaces(std::string &expression);
 
 } // namespace qoptic

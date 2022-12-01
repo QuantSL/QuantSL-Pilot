@@ -21,7 +21,7 @@ indexedDefinition : object=SYMBOLNAME botindex EQUAL definitions+=expression NEW
 expression           : (arithmeticExpression | sumExpression) (arithmethic (arithmeticExpression | sumExpression))*;
 sumExpression        : SUM boundary=sumindices ARGOPEN expression ARGCLOSE;
 arithmeticExpression : sign? elementaryExpression (arithmethic elementaryExpression)*;
-elementaryExpression : (name=SYMBOLNAME botindex?) | (ARGOPEN expression ARGCLOSE);
+elementaryExpression : (name=(SIGMA | SYMBOLNAME) botindex?) | (ARGOPEN expression ARGCLOSE);
 
 sumindices        : botindex topindex;
 // TODO: add support for interger indices

@@ -25,14 +25,14 @@ private:
 public:
   ~SummationTree() { for (SummationTree* childTree : _childrenTrees) delete childTree;}
 
+  std::string expression;
   std::vector<std::string> indices;
   std::vector<std::string> lowerBounds;
   std::vector<std::string> upperBounds;
 
-  SummationTree(std::vector<std::string> indicesIn, std::vector<std::string> lowerBoundsIn,
-                std::vector<std::string> upperBoundsIn) :
-                indices(indicesIn), lowerBounds(lowerBoundsIn), upperBounds(upperBoundsIn) {};
-
+  SummationTree(std::string expressionIn, std::vector<std::string> indicesIn,
+                std::vector<std::string> lowerBoundsIn, std::vector<std::string> upperBoundsIn);
+  
   void addChildIndices(std::vector<std::string> childIndices)  { _childrensIndices.push_back(childIndices); }
   void addChildTree(             SummationTree* childTree)     { _childrenTrees.push_back(childTree); }
   void addChildOperator(std::string childOperator, std::vector<std::string> childOperatorIndex) {
@@ -54,11 +54,11 @@ private:
 public:
   ~DefinitionTree() { for (SummationTree* childTree : _childrenTrees) delete childTree; }
 
+  std::string expression;
   std::string name;
   std::vector<std::string> indices;
 
-  DefinitionTree(std::string nameIn, std::vector<std::string> indicesIn) :
-                 name(nameIn), indices(indicesIn) {}
+  DefinitionTree(std::string expressionIn, std::string nameIn, std::vector<std::string> indicesIn);
 
   void addChildIndices(std::vector<std::string> childIndices)  { _childrensIndices.push_back(childIndices); }
   void addChildTree(             SummationTree* childTree)     { _childrenTrees.push_back(childTree); }
@@ -68,7 +68,7 @@ public:
   }
     
   std::string generateIndexSampler(std::string parameterCheck);
-  std::string generateDefinition(std::string parameterCheck);
+  std::string generateDefinition(std::string parameterCheck, std::string basisGeneration);
 };
 
 } // namespace qoptic

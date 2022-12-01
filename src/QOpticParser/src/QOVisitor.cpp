@@ -1,5 +1,4 @@
 #include "QOVisitor.h"
-#include <string>
 #include <stdexcept>
 
 #include "StringTools.h"
@@ -25,7 +24,7 @@ antlrcpp::Any qoptic::QOVisitor::visitSimpleDefinition(qoptic::QOParser::SimpleD
 
   _operators.push_back(ctx->object->getText());
 
-  qoptic::DefinitionTree* tree = new qoptic::DefinitionTree(ctx->object->getText(), std::vector<std::string>());
+  qoptic::DefinitionTree* tree = new qoptic::DefinitionTree(ctx->getText(), ctx->object->getText(), std::vector<std::string>());
   _definitionTrees.push_back(tree);
   _currentTreeContext = tree;
 
@@ -57,7 +56,7 @@ antlrcpp::Any qoptic::QOVisitor::visitIndexedDefinition(qoptic::QOParser::Indexe
     _indexedOperatorDefinitions.push_back(definition->getText());
   }
 
-  qoptic::DefinitionTree* tree = new qoptic::DefinitionTree(ctx->object->getText(), _currentIndices);
+  qoptic::DefinitionTree* tree = new qoptic::DefinitionTree(ctx->getText(), ctx->object->getText(), _currentIndices);
   _definitionTrees.push_back(tree);
   _currentTreeContext = tree;
 
@@ -127,7 +126,7 @@ antlrcpp::Any qoptic::QOVisitor::visitSumExpression(qoptic::QOParser::SumExpress
   }
   std::vector<std::string> upperBounds(indices.size(), upperBound);
 
-  SummationTree* tree = new SummationTree(indices, lowerBounds, upperBounds);
+  SummationTree* tree = new SummationTree(ctx->expression()->getText(), indices, lowerBounds, upperBounds);
   _currentTreeContext->addChildTree(tree);
   _currentTreeContext = tree;
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
