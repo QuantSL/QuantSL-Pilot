@@ -24,10 +24,6 @@ antlrcpp::Any qoptic::QOVisitor::visitSimpleDefinition(qoptic::QOParser::SimpleD
 
   _operators.push_back(ctx->object->getText());
 
-  qoptic::DefinitionTree* tree = new qoptic::DefinitionTree(ctx->getText(), ctx->object->getText(), std::vector<std::string>());
-  _definitionTrees.push_back(tree);
-  _currentTreeContext = tree;
-
   for (auto definition : ctx->definitions) {
     _operatorDefinitions.push_back(definition->getText());
   }
@@ -56,10 +52,6 @@ antlrcpp::Any qoptic::QOVisitor::visitIndexedDefinition(qoptic::QOParser::Indexe
     _indexedOperatorDefinitions.push_back(definition->getText());
   }
 
-  qoptic::DefinitionTree* tree = new qoptic::DefinitionTree(ctx->getText(), ctx->object->getText(), _currentIndices);
-  _definitionTrees.push_back(tree);
-  _currentTreeContext = tree;
-
   return visitChildren(ctx);
 }
 
@@ -84,12 +76,11 @@ antlrcpp::Any qoptic::QOVisitor::visitElementaryExpression(qoptic::QOParser::Ele
   }
 
   std::string objectName = ctx->name->getText();
-  if ( contains(elementaryOperators,  objectName) ) _currentTreeContext->addChildIndices(indices);
-  else if ( contains(_indexedOperators, objectName ) ) _currentTreeContext->addChildOperator(objectName, indices);
-  else if ( !contains(_operators, objectName ) ) {
+  if ( !contains(_operators, objectName ) && !contains(_indexedOperators, objectName) &&
+       !contains(elementaryOperators, objectName) ) {
     throw std::invalid_argument(
       "Object error at line " + std::to_string(_lineNumber) + " in expression:\n" + ctx->getText() + "\n" +
-      "Object '" + ctx->name->getText() + "' is not defined."
+      "Object '" + objectName + "' is not defined."
     );
   }
 
@@ -98,7 +89,6 @@ antlrcpp::Any qoptic::QOVisitor::visitElementaryExpression(qoptic::QOParser::Ele
 
 antlrcpp::Any qoptic::QOVisitor::visitSumExpression(qoptic::QOParser::SumExpressionContext *ctx) {
   // Store old indices and tree context
-  BaseTree* oldTreeContext = _currentTreeContext;
   std::vector<std::string> oldIndices = _currentIndices;
   
   // Sanitise input, then add to indices
@@ -126,14 +116,9 @@ antlrcpp::Any qoptic::QOVisitor::visitSumExpression(qoptic::QOParser::SumExpress
   }
   std::vector<std::string> upperBounds(indices.size(), upperBound);
 
-  SummationTree* tree = new SummationTree(ctx->expression()->getText(), indices, lowerBounds, upperBounds);
-  _currentTreeContext->addChildTree(tree);
-  _currentTreeContext = tree;
+  // Restore old indices and return
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-
-  // Restore old indices and tree context, and return
   _currentIndices = oldIndices;
-  _currentTreeContext = oldTreeContext;
   return visitedChildrenReturn;
 }
 

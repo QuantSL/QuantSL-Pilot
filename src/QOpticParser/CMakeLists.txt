@@ -42,7 +42,7 @@ include_directories(${ANTLR_SampleGrammarParser_OUTPUT_DIR})
 # add generated grammar to demo binary target
 add_executable(QOpticParser src/main.cpp
                src/QOVisitor.cpp src/QOIndexVisitor.cpp src/QODefinitionVisitor.cpp
-               src/QOCodeGen.cpp src/DefinitionTree.cpp src/StringTools.cpp
+               src/QOCodeGen.cpp src/StringTools.cpp
                ${ANTLR_SampleGrammarLexer_CXX_OUTPUTS}
                ${ANTLR_SampleGrammarParser_CXX_OUTPUTS})
 target_link_libraries(QOpticParser antlr4_static)

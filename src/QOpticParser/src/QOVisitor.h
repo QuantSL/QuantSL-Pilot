@@ -5,7 +5,6 @@
 
 #include <antlr4-runtime.h>
 #include "QOParserBaseVisitor.h"
-#include "DefinitionTree.h"
 
 namespace qoptic {
 
@@ -23,14 +22,9 @@ private:
   std::vector<std::string> _indexedOperatorDefinitions;
   std::vector<std::vector<std::string>> _indicesRegister;
 
-  qoptic::BaseTree* _currentTreeContext;
-  std::vector<qoptic::DefinitionTree*> _definitionTrees;
-
   std::vector<std::string> _currentIndices;
 
 public:
-  ~QOVisitor() { for (auto tree : _definitionTrees) delete tree; }
-
   // TODO: let the elementary operators be defined by the user, by 'using Spin(1//2)' for example
   const std::vector<std::string> elementaryOperators { "σx", "σy", "σz", "sigmax", "sigmay", "sigmaz", "sigmap", "sigmam" };
 
@@ -48,8 +42,6 @@ public:
   std::vector<std::string> getIndexedOperators() { return _indexedOperators; };
   std::vector<std::string> getOperatorsDebug();
   std::vector<std::string> getIndexedOperatorsDebug();
-
-  const std::vector<qoptic::DefinitionTree*>& getDefinitions() { return _definitionTrees; }
 };
 
 } // namespace qoptic
