@@ -36,11 +36,12 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitSubsystems(QOParser::SubsystemsC
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitSimpleDefinition(qoptic::QOParser::SimpleDefinitionContext *ctx) {
   _indentation = "\t";
-  std::string functionName = "_generate_" + stripCurlyBraces(ctx->object->getText());
+  std::string operatorName = stripCurlyBraces(ctx->object->getText());
+  _operatorList.push_back(operatorName);
 
-  _definitions += "function " + functionName + "(; parameters::Dict)\n";
-  _definitions += _parameterCheck;
-  _definitions += _basisAndOperators;
+  _definitions += "function _generate_" + operatorName +
+    "(; basis, indexDict, operators, parameters::Dict)\n";
+  _definitions += "\tσx, σy, σz, σp, σm = operators\n\n";
 
   _definitions += "\treturn ";
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
@@ -53,12 +54,14 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitIndexedDefinition(qoptic::QOPars
   std::vector<std::string> indices;
   for ( auto index : ctx->botindex()->indices ) indices.push_back(index->getText());
 
-  _definitions += "function _generate_" + stripCurlyBraces(ctx->object->getText()) +
-    "(" + separateByComma(indices) + "; parameters::Dict)\n";
-  _definitions += _parameterCheck;
-  _definitions += _basisAndOperators;
+  std::string operatorName = stripCurlyBraces(ctx->object->getText());
+  _operatorList.push_back(operatorName);
 
-  _definitions += "\treturn (" + separateByComma(indices) + ") ->";
+  _definitions += "function _generate_" + operatorName + "(" + separateByComma(indices) +
+    "; basis, indexDict, operators, parameters::Dict)\n";
+  _definitions += "\tσx, σy, σz, σp, σm = operators\n\n";
+
+  _definitions += "\treturn (" + separateByComma(indices) + ") -> ";
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
   _definitions += "\nend\n\n";
   return visitedChildrenReturn;
@@ -126,4 +129,29 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitArithmethic(qoptic::QOParser::Ar
   else _definitions += " " + ctx->getText() + " ";
 
   return visitChildren(ctx);
+}
+
+std::string qoptic::QODefinitionVisitor::generateOperatorContainer() {
+  std::string container = "struct OperatorContainer\n";
+  for (auto operatorName : _operatorList) {
+    container += "\t" + stripCurlyBraces(operatorName) + "\n";
+  }
+  container += "end\n\n";
+  return container;
+}
+
+std::string qoptic::QODefinitionVisitor::generateSystem() {
+  std::string generateSystem = "function generateSystem(; parameters::Dict)\n";
+  generateSystem += _parameterCheck;
+  generateSystem += _basisAndOperators;
+
+  generateSystem += "\tOperatorContainer(";
+  std::vector<std::string> operatorGenerators;
+  for (auto operatorName : _operatorList) {
+    operatorGenerators.push_back( "\n\t\t_generate_" + stripCurlyBraces(operatorName) +
+      "(basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)" );
+  }
+  generateSystem += separateByComma(operatorGenerators);
+  generateSystem += "\n\t)\nend\n\n";
+  return generateSystem;
 }

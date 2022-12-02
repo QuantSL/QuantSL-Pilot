@@ -104,7 +104,7 @@ antlrcpp::Any qoptic::QOIndexVisitor::visitElementaryExpression(qoptic::QOParser
     }
   }
 
-  if      ( ctx->SIGMA()      != nullptr ) {
+  if ( ctx->SIGMA() != nullptr ) {
     _indexSampler += _indentation + "results = results..., (" + separateByComma(indices) + ")\n";
   }
   else if ( ctx->SYMBOLNAME() != nullptr ) {

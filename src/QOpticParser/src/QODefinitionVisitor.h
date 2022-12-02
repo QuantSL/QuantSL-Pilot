@@ -11,9 +11,9 @@ namespace qoptic {
 class  QODefinitionVisitor : public qoptic::QOParserBaseVisitor {
 private:
   const std::string _basisAndOperators = "\tindices = _generate_indices(parameters = parameters)\n"
-    "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n"
     "\tbasis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )\n\n"
-    "\tσx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]\n\n";
+    "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n"
+    "\toperators = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]\n\n";
 
   std::string _definitions;
   std::string _indentation;
@@ -23,6 +23,8 @@ private:
   void _generateParameterCheck();
 
   std::vector<std::string> _subsystems;
+
+  std::vector<std::string> _operatorList;
 
 public:
   antlrcpp::Any visitMain(                qoptic::QOParser::MainContext                 *ctx);
@@ -36,6 +38,8 @@ public:
   antlrcpp::Any visitArithmethic(         qoptic::QOParser::ArithmethicContext          *ctx);
 
   std::string getDefinitions() { return _definitions; };
+  std::string generateOperatorContainer();
+  std::string generateSystem();
 };
 
 } // namespace qoptic
