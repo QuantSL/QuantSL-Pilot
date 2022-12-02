@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include "QOIndexVisitor.h"
+#include "QODefinitionVisitor.h"
 #include "StringTools.h"
 
 // std::string qoptic::_generateOperatorContainer(QOIndexVisitor &visitor) {
@@ -43,10 +44,16 @@ int qoptic::generateCode(std::string filename, QOParser &parser) {
   }
   file << "\treturn unique(results)\nend\n\n";
 
-  std::string basisCode = _generateBasis();
-  // for (auto tree : trees) {
-  //   file << tree->generateDefinition(checkParameters, basisCode);
-  // }
+  parser.reset();
+  QODefinitionVisitor definitionVisitor;
+  try {
+    definitionVisitor.visitMain(parser.main());
+  }
+  catch(const std::exception& e) {
+    std::cerr << e.what() << '\n';
+    return -1;
+  }
+  file << definitionVisitor.getDefinitions();
 
   file.close();
   return 0;

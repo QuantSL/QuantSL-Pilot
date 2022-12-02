@@ -19,8 +19,9 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitMain(QOParser::MainContext *ctx)
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitParameters(QOParser::ParametersContext *ctx) {
   for (auto parameter : ctx->elements) {
-    _parameters.push_back(parameter->getText());
+    _parameters.push_back( stripCurlyBraces( parameter->getText() ) );
   }
+  _generateParameterCheck();
 
   return visitChildren(ctx);
 }
@@ -36,7 +37,6 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitSubsystems(QOParser::SubsystemsC
 antlrcpp::Any qoptic::QODefinitionVisitor::visitSimpleDefinition(qoptic::QOParser::SimpleDefinitionContext *ctx) {
   _indentation = "\t";
   std::string functionName = "_generate_" + stripCurlyBraces(ctx->object->getText());
-  _simpleOperatorGenerators.push_back(functionName);
 
   _definitions += "function " + functionName + "(; parameters::Dict)\n";
   _definitions += _parameterCheck;
@@ -57,9 +57,8 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitIndexedDefinition(qoptic::QOPars
     "(" + separateByComma(indices) + "; parameters::Dict)\n";
   _definitions += _parameterCheck;
   _definitions += _basisAndOperators;
-  _definitions += _indentation + "results = ()\n";
 
-  _definitions += "\treturn ";
+  _definitions += "\treturn (" + separateByComma(indices) + ") ->";
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
   _definitions += "\nend\n\n";
   return visitedChildrenReturn;
@@ -68,14 +67,12 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitIndexedDefinition(qoptic::QOPars
 antlrcpp::Any qoptic::QODefinitionVisitor::visitSumExpression(qoptic::QOParser::SumExpressionContext *ctx) {
   std::vector<std::string> indices;
   for ( auto index : ctx->boundary->botindex()->indices ) indices.push_back(index->getText());
-  std::string upperBound = ctx->boundary->topindex()->getText();
+  std::string upperBound = ctx->boundary->topindex()->index->getText();
 
   // Sum open
   for (int i = 0; i < indices.size(); i++) {
-    _definitions += _indentation + "for " + indices[i] + " in [1:"; // TODO: Replace 1 with lower bound
-    if(isNumber(upperBound)) _definitions += upperBound + ";]\n";
-    else _definitions += "parameters[:" + upperBound + "];]\n";
     _indentation += "\t";
+    _definitions += "sum(" + indices[i] + " -> \n" + _indentation;
   }
 
   // Further Parse Tree
@@ -84,10 +81,11 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitSumExpression(qoptic::QOParser::
   // Sum close
   for (int i = 0; i < indices.size(); i++) {
     _indentation = _indentation.substr(1);
-    _definitions += _indentation + "end\n";
+    _definitions += ", [1:";
+    _definitions += isNumber(upperBound) ? upperBound + ";]\n" + _indentation + ")" :
+      "parameters[:" + upperBound + "];]\n" + _indentation + ")" ;
   }
 
-  // Restore old indices and tree context, and return
   return visitedChildrenReturn;
 }
 
@@ -101,11 +99,17 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitElementaryExpression(qoptic::QOP
     }
   }
 
-  if      ( ctx->SIGMA()      != nullptr ) _definitions += _indentation + "push!(results, (" + separateByComma(indices) + "))\n";
+  if ( ctx->SIGMA() != nullptr ) {
+    _definitions += "embed(basis, indexDict[";
+    if      ( indices.size() == 0 ) _definitions += "1], σ";
+    else if ( indices.size() == 1 ) _definitions += indices[0] + "], σ";
+    else                            _definitions += "(" + separateByComma(indices) + ")], σ";
+    _definitions += ctx->SIGMA()->getText().back(); _definitions += ")";
+  }
   else if ( ctx->SYMBOLNAME() != nullptr ) {
-    _definitions += _indentation + "push!(results, _generate_indices_from_" +
-      stripCurlyBraces( ctx->SYMBOLNAME()->getText() ) + "(" + separateByComma(indices) +
-      "; parameters::Dict) )\n";
+    std::string symbolName = stripCurlyBraces( ctx->SYMBOLNAME()->getText() );
+    if ( contains(_parameters, symbolName) ) _definitions += "parameters[:" + symbolName + "]";
+    else _definitions += "_generate_" + symbolName + "(" + separateByComma(indices) + ")";
   }
 
   return visitChildren(ctx);

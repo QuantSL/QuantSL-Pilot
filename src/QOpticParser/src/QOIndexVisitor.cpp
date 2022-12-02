@@ -21,6 +21,7 @@ antlrcpp::Any qoptic::QOIndexVisitor::visitParameters(QOParser::ParametersContex
   for (auto parameter : ctx->elements) {
     _parameters.push_back(parameter->getText());
   }
+  _generateParameterCheck();
 
   return visitChildren(ctx);
 }
@@ -77,8 +78,7 @@ antlrcpp::Any qoptic::QOIndexVisitor::visitSumExpression(qoptic::QOParser::SumEx
   // Sum open
   for (int i = 0; i < indices.size(); i++) {
     _indexSampler += _indentation + "for " + indices[i] + " in [1:"; // TODO: Replace 1 with lower bound
-    if(isNumber(upperBound)) _indexSampler += upperBound + ";]\n";
-    else _indexSampler += "parameters[:" + upperBound + "];]\n";
+    _indexSampler += isNumber(upperBound) ? upperBound + ";]\n" : "parameters[:" + upperBound + "];]\n";
     _indentation += "\t";
   }
 
@@ -91,7 +91,6 @@ antlrcpp::Any qoptic::QOIndexVisitor::visitSumExpression(qoptic::QOParser::SumEx
     _indexSampler += _indentation + "end\n";
   }
 
-  // Restore old indices and tree context, and return
   return visitedChildrenReturn;
 }
 

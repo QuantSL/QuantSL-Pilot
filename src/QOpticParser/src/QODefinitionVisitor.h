@@ -24,8 +24,6 @@ private:
 
   std::vector<std::string> _subsystems;
 
-  std::vector<std::string> _simpleOperatorGenerators;
-
 public:
   antlrcpp::Any visitMain(                qoptic::QOParser::MainContext                 *ctx);
   antlrcpp::Any visitParameters(          qoptic::QOParser::ParametersContext           *ctx);
@@ -37,7 +35,7 @@ public:
   antlrcpp::Any visitSign(                qoptic::QOParser::SignContext                 *ctx);
   antlrcpp::Any visitArithmethic(         qoptic::QOParser::ArithmethicContext          *ctx);
 
-  std::vector<std::string> getSimpleOperators() { return _simpleOperatorGenerators; };
+  std::string getDefinitions() { return _definitions; };
 };
 
 } // namespace qoptic
