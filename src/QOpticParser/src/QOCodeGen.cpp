@@ -16,12 +16,6 @@
 //   return container;
 // }
 
-std::string qoptic::_generateBasis() {
-  return std::string("\tindices = _generate_indices(parameters = parameters)\n"
-    "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n"
-    "\tbasis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )\n\n");
-}
-
 int qoptic::generateCode(std::string filename, QOParser &parser) {
   std::ofstream file;
   file.open(filename);

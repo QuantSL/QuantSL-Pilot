@@ -21,7 +21,6 @@ antlrcpp::Any qoptic::QOIndexVisitor::visitParameters(QOParser::ParametersContex
   for (auto parameter : ctx->elements) {
     _parameters.push_back(parameter->getText());
   }
-  _generateParameterCheck();
 
   return visitChildren(ctx);
 }
@@ -46,9 +45,9 @@ antlrcpp::Any qoptic::QOIndexVisitor::visitSimpleDefinition(qoptic::QOParser::Si
   _indexSampler += _parameterCheck;
   _indexSampler += _indentation + "results = ()\n";
 
-  antlrcpp::Any returnValue = visitChildren(ctx);
+  antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
   _indexSampler += "\treturn results\nend\n\n";
-  return returnValue;
+  return visitedChildrenReturn;
 }
 
 antlrcpp::Any qoptic::QOIndexVisitor::visitIndexedDefinition(qoptic::QOParser::IndexedDefinitionContext *ctx) {

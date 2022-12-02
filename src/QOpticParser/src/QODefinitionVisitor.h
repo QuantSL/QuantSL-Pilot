@@ -10,7 +10,12 @@ namespace qoptic {
 
 class  QODefinitionVisitor : public qoptic::QOParserBaseVisitor {
 private:
-  std::string _indexSampler;
+  const std::string _basisAndOperators = "\tindices = _generate_indices(parameters = parameters)\n"
+    "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n"
+    "\tbasis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )\n\n"
+    "\tσx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]\n\n";
+
+  std::string _definitions;
   std::string _indentation;
 
   std::vector<std::string> _parameters;
@@ -32,7 +37,6 @@ public:
   antlrcpp::Any visitSign(                qoptic::QOParser::SignContext                 *ctx);
   antlrcpp::Any visitArithmethic(         qoptic::QOParser::ArithmethicContext          *ctx);
 
-  std::string getIndexSampler() { return _indexSampler; };
   std::vector<std::string> getSimpleOperators() { return _simpleOperatorGenerators; };
 };
 

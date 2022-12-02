@@ -11,7 +11,7 @@ void qoptic::QODefinitionVisitor::_generateParameterCheck() {
 }
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitMain(QOParser::MainContext *ctx) {
-  _indexSampler = "";
+  _definitions = "";
 
   return visitChildren(ctx);
 }
@@ -21,7 +21,6 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitParameters(QOParser::ParametersC
   for (auto parameter : ctx->elements) {
     _parameters.push_back(parameter->getText());
   }
-  _generateParameterCheck();
 
   return visitChildren(ctx);
 }
@@ -36,16 +35,17 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitSubsystems(QOParser::SubsystemsC
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitSimpleDefinition(qoptic::QOParser::SimpleDefinitionContext *ctx) {
   _indentation = "\t";
-  std::string functionName = "_generate_indices_from_" + stripCurlyBraces(ctx->object->getText());
+  std::string functionName = "_generate_" + stripCurlyBraces(ctx->object->getText());
   _simpleOperatorGenerators.push_back(functionName);
 
-  _indexSampler += "function " + functionName + "(; parameters::Dict)\n";
-  _indexSampler += _parameterCheck;
-  _indexSampler += _indentation + "results = ()\n";
+  _definitions += "function " + functionName + "(; parameters::Dict)\n";
+  _definitions += _parameterCheck;
+  _definitions += _basisAndOperators;
 
-  antlrcpp::Any returnValue = visitChildren(ctx);
-  _indexSampler += "\treturn results\nend\n\n";
-  return returnValue;
+  _definitions += "\treturn ";
+  antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
+  _definitions += "\nend\n\n";
+  return visitedChildrenReturn;
 }
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitIndexedDefinition(qoptic::QOParser::IndexedDefinitionContext *ctx) {
@@ -53,13 +53,15 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitIndexedDefinition(qoptic::QOPars
   std::vector<std::string> indices;
   for ( auto index : ctx->botindex()->indices ) indices.push_back(index->getText());
 
-  _indexSampler += "function _generate_indices_from_" + stripCurlyBraces(ctx->object->getText()) +
+  _definitions += "function _generate_" + stripCurlyBraces(ctx->object->getText()) +
     "(" + separateByComma(indices) + "; parameters::Dict)\n";
-  _indexSampler += _parameterCheck;
-  _indexSampler += _indentation + "results = ()\n";
+  _definitions += _parameterCheck;
+  _definitions += _basisAndOperators;
+  _definitions += _indentation + "results = ()\n";
 
+  _definitions += "\treturn ";
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  _indexSampler += "\treturn results\nend\n\n";
+  _definitions += "\nend\n\n";
   return visitedChildrenReturn;
 }
 
@@ -70,9 +72,9 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitSumExpression(qoptic::QOParser::
 
   // Sum open
   for (int i = 0; i < indices.size(); i++) {
-    _indexSampler += _indentation + "for " + indices[i] + " in [1:"; // TODO: Replace 1 with lower bound
-    if(isNumber(upperBound)) _indexSampler += upperBound + ";]\n";
-    else _indexSampler += "parameters[:" + upperBound + "];]\n";
+    _definitions += _indentation + "for " + indices[i] + " in [1:"; // TODO: Replace 1 with lower bound
+    if(isNumber(upperBound)) _definitions += upperBound + ";]\n";
+    else _definitions += "parameters[:" + upperBound + "];]\n";
     _indentation += "\t";
   }
 
@@ -82,7 +84,7 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitSumExpression(qoptic::QOParser::
   // Sum close
   for (int i = 0; i < indices.size(); i++) {
     _indentation = _indentation.substr(1);
-    _indexSampler += _indentation + "end\n";
+    _definitions += _indentation + "end\n";
   }
 
   // Restore old indices and tree context, and return
@@ -99,9 +101,9 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitElementaryExpression(qoptic::QOP
     }
   }
 
-  if      ( ctx->SIGMA()      != nullptr ) _indexSampler += _indentation + "push!(results, (" + separateByComma(indices) + "))\n";
+  if      ( ctx->SIGMA()      != nullptr ) _definitions += _indentation + "push!(results, (" + separateByComma(indices) + "))\n";
   else if ( ctx->SYMBOLNAME() != nullptr ) {
-    _indexSampler += _indentation + "push!(results, _generate_indices_from_" +
+    _definitions += _indentation + "push!(results, _generate_indices_from_" +
       stripCurlyBraces( ctx->SYMBOLNAME()->getText() ) + "(" + separateByComma(indices) +
       "; parameters::Dict) )\n";
   }
@@ -110,14 +112,14 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitElementaryExpression(qoptic::QOP
 }
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitSign(qoptic::QOParser::SignContext *ctx) {
-  _indexSampler += ctx->getText() + " ";
+  _definitions += ctx->getText() + " ";
 
   return visitChildren(ctx);
 }
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitArithmethic(qoptic::QOParser::ArithmethicContext *ctx) {
-  if ( ctx->getText() == "^" ) _indexSampler += ctx->getText();
-  else _indexSampler += " " + ctx->getText() + " ";
+  if ( ctx->getText() == "^" ) _definitions += ctx->getText();
+  else _definitions += " " + ctx->getText() + " ";
 
   return visitChildren(ctx);
 }
