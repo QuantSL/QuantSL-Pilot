@@ -86,13 +86,113 @@ function _generate_indices(; parameters::Dict)
 	return unique(results)
 end
 
-function _generate_n_test(i; basis, indexDict, operators, parameters::Dict)
+function generate_n_test(; parameters::Dict)
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
+		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
+	end
+
+	indices = _generate_indices(parameters = parameters)
+	basis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )
+
+	indexDict = Dict(key => val for (val, key) in enumerate(indices))
+
+	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+
+	return (i) -> embed(basis, indexDict[(:a, i)], σx) * embed(basis, indexDict[(:b, i)], σx)
+end
+
+function generate_n(; parameters::Dict)
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
+		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
+	end
+
+	indices = _generate_indices(parameters = parameters)
+	basis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )
+
+	indexDict = Dict(key => val for (val, key) in enumerate(indices))
+
+	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+
+	return (i, j) -> embed(basis, indexDict[i], σz) * embed(basis, indexDict[j], σz)
+end
+
+function generate_H_onsite(; parameters::Dict)
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
+		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
+	end
+
+	indices = _generate_indices(parameters = parameters)
+	basis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )
+
+	indexDict = Dict(key => val for (val, key) in enumerate(indices))
+
+	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+
+	return parameters[:U_int] * sum(i -> 
+		sum(j -> 
+			_generate_n(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)(i, j), [1:parameters[:N];]
+		), [1:parameters[:N];]
+	)
+end
+
+function generate_H_int(; parameters::Dict)
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
+		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
+	end
+
+	indices = _generate_indices(parameters = parameters)
+	basis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )
+
+	indexDict = Dict(key => val for (val, key) in enumerate(indices))
+
+	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+
+	return parameters[:J] * sum(i -> 
+		sum(j -> 
+			embed(basis, indexDict[i], σx) * embed(basis, indexDict[j], σx), [1:parameters[:N];]
+		), [1:parameters[:N];]
+	)
+end
+
+function generate_H_lattice(; parameters::Dict)
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
+		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
+	end
+
+	indices = _generate_indices(parameters = parameters)
+	basis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )
+
+	indexDict = Dict(key => val for (val, key) in enumerate(indices))
+
+	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+
+	return sum(i -> 
+		_generate_n_test(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)(i) * _generate_n_test(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)(i) * embed(basis, indexDict[i], σz), [1:parameters[:N];]
+	)
+end
+
+function generate_H(; parameters::Dict)
+	for parameter in [:N, :J, :U_int] # Check if all parameters are defined
+		!haskey(parameters, parameter) && error("Parameter $parameter not defined")
+	end
+
+	indices = _generate_indices(parameters = parameters)
+	basis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )
+
+	indexDict = Dict(key => val for (val, key) in enumerate(indices))
+
+	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+
+	return _generate_H_onsite(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)() + _generate_H_int(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)() + _generate_H_lattice(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)()
+end
+
+function _generate_n_test(; basis, indexDict, operators, parameters::Dict)
 	σx, σy, σz, σp, σm = operators
 
 	return (i) -> embed(basis, indexDict[(:a, i)], σx) * embed(basis, indexDict[(:b, i)], σx)
 end
 
-function _generate_n(i, j; basis, indexDict, operators, parameters::Dict)
+function _generate_n(; basis, indexDict, operators, parameters::Dict)
 	σx, σy, σz, σp, σm = operators
 
 	return (i, j) -> embed(basis, indexDict[i], σz) * embed(basis, indexDict[j], σz)
@@ -103,7 +203,7 @@ function _generate_H_onsite(; basis, indexDict, operators, parameters::Dict)
 
 	return parameters[:U_int] * sum(i -> 
 		sum(j -> 
-			_generate_n(i, j), [1:parameters[:N];]
+			_generate_n(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)(i, j), [1:parameters[:N];]
 		), [1:parameters[:N];]
 	)
 end
@@ -122,14 +222,14 @@ function _generate_H_lattice(; basis, indexDict, operators, parameters::Dict)
 	σx, σy, σz, σp, σm = operators
 
 	return sum(i -> 
-		_generate_n_test(i) * _generate_n_test(i) * embed(basis, indexDict[i], σz), [1:parameters[:N];]
+		_generate_n_test(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)(i) * _generate_n_test(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)(i) * embed(basis, indexDict[i], σz), [1:parameters[:N];]
 	)
 end
 
 function _generate_H(; basis, indexDict, operators, parameters::Dict)
 	σx, σy, σz, σp, σm = operators
 
-	return _generate_H_onsite() + _generate_H_int() + _generate_H_lattice()
+	return _generate_H_onsite(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)() + _generate_H_int(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)() + _generate_H_lattice(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)()
 end
 
 struct OperatorContainer

@@ -30,6 +30,7 @@ int qoptic::generateCode(std::string filename, QOParser &parser) {
   }
   file << "\treturn unique(results)\nend\n\n";
 
+  // Generate code to define each quantum object
   parser.reset();
   QODefinitionVisitor definitionVisitor;
   try {
@@ -39,6 +40,7 @@ int qoptic::generateCode(std::string filename, QOParser &parser) {
     std::cerr << e.what() << '\n';
     return -1;
   }
+  file << definitionVisitor.getUserDefinitions();
   file << definitionVisitor.getDefinitions();
   file << definitionVisitor.generateOperatorContainer();
   file << definitionVisitor.generateSystem();

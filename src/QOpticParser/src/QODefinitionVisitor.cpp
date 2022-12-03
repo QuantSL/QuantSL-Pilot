@@ -43,9 +43,13 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitSimpleDefinition(qoptic::QOParse
     "(; basis, indexDict, operators, parameters::Dict)\n";
   _definitions += "\tσx, σy, σz, σp, σm = operators\n\n";
 
-  _definitions += "\treturn ";
+  _userDefinitions += "function generate_" + operatorName + "(; parameters::Dict)\n";
+  _userDefinitions += _parameterCheck;
+  _userDefinitions += _basisAndOperatorsUser;
+
+  _definitions += "\treturn "; _userDefinitions += "\treturn ";
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  _definitions += "\nend\n\n";
+  _definitions += "\nend\n\n"; _userDefinitions += "\nend\n\n";
   return visitedChildrenReturn;
 }
 
@@ -57,13 +61,17 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitIndexedDefinition(qoptic::QOPars
   std::string operatorName = stripCurlyBraces(ctx->object->getText());
   _operatorList.push_back(operatorName);
 
-  _definitions += "function _generate_" + operatorName + "(" + separateByComma(indices) +
-    "; basis, indexDict, operators, parameters::Dict)\n";
+  _definitions += "function _generate_" + operatorName + "(; basis, indexDict, operators, parameters::Dict)\n";
   _definitions += "\tσx, σy, σz, σp, σm = operators\n\n";
 
+  _userDefinitions += "function generate_" + operatorName + "(; parameters::Dict)\n";
+  _userDefinitions += _parameterCheck;
+  _userDefinitions += _basisAndOperatorsUser;
+
   _definitions += "\treturn (" + separateByComma(indices) + ") -> ";
+  _userDefinitions += "\treturn (" + separateByComma(indices) + ") -> ";
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  _definitions += "\nend\n\n";
+  _definitions += "\nend\n\n"; _userDefinitions += "\nend\n\n";
   return visitedChildrenReturn;
 }
 
@@ -73,21 +81,25 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitSumExpression(qoptic::QOParser::
   std::string upperBound = ctx->boundary->topindex()->index->getText();
 
   // Sum open
+  std::string sumResult = "";
   for (int i = 0; i < indices.size(); i++) {
     _indentation += "\t";
-    _definitions += "sum(" + indices[i] + " -> \n" + _indentation;
+    sumResult += "sum(" + indices[i] + " -> \n" + _indentation;
   }
+  _definitions += sumResult; _userDefinitions += sumResult;
 
   // Further Parse Tree
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
 
   // Sum close
+  sumResult = "";
   for (int i = 0; i < indices.size(); i++) {
     _indentation = _indentation.substr(1);
-    _definitions += ", [1:";
-    _definitions += isNumber(upperBound) ? upperBound + ";]\n" + _indentation + ")" :
+    sumResult += ", [1:";
+    sumResult += isNumber(upperBound) ? upperBound + ";]\n" + _indentation + ")" :
       "parameters[:" + upperBound + "];]\n" + _indentation + ")" ;
   }
+  _definitions += sumResult; _userDefinitions += sumResult;
 
   return visitedChildrenReturn;
 }
@@ -102,31 +114,37 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitElementaryExpression(qoptic::QOP
     }
   }
 
+  std::string expression = "";
   if ( ctx->SIGMA() != nullptr ) {
-    _definitions += "embed(basis, indexDict[";
-    if      ( indices.size() == 0 ) _definitions += "1], σ";
-    else if ( indices.size() == 1 ) _definitions += indices[0] + "], σ";
-    else                            _definitions += "(" + separateByComma(indices) + ")], σ";
-    _definitions += ctx->SIGMA()->getText().back(); _definitions += ")";
+    expression += "embed(basis, indexDict[";
+    if      ( indices.size() == 0 ) expression += "1], σ";
+    else if ( indices.size() == 1 ) expression += indices[0] + "], σ";
+    else                            expression += "(" + separateByComma(indices) + ")], σ";
+    expression += ctx->SIGMA()->getText().back(); expression += ")";
   }
   else if ( ctx->SYMBOLNAME() != nullptr ) {
     std::string symbolName = stripCurlyBraces( ctx->SYMBOLNAME()->getText() );
-    if ( contains(_parameters, symbolName) ) _definitions += "parameters[:" + symbolName + "]";
-    else _definitions += "_generate_" + symbolName + "(" + separateByComma(indices) + ")";
+    if ( contains(_parameters, symbolName) ) expression += "parameters[:" + symbolName + "]";
+    else expression += "_generate_" + symbolName +
+      "(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)(" +
+      separateByComma(indices) + ")";
   }
+  _definitions += expression; _userDefinitions += expression;
 
   return visitChildren(ctx);
 }
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitSign(qoptic::QOParser::SignContext *ctx) {
-  _definitions += ctx->getText() + " ";
+  _definitions += ctx->getText() + " "; _userDefinitions += ctx->getText() + " ";
 
   return visitChildren(ctx);
 }
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitArithmethic(qoptic::QOParser::ArithmethicContext *ctx) {
-  if ( ctx->getText() == "^" ) _definitions += ctx->getText();
-  else _definitions += " " + ctx->getText() + " ";
+  std::string arithmethicString = "";
+  if ( ctx->getText() == "^" ) arithmethicString += ctx->getText();
+  else arithmethicString += " " + ctx->getText() + " ";
+  _definitions += arithmethicString; _userDefinitions += arithmethicString;
 
   return visitChildren(ctx);
 }
