@@ -1,12 +1,11 @@
 #include "QOValidationVisitor.h"
 #include <stdexcept>
-#include <iostream>
 
 #include "StringTools.h"
 
 antlrcpp::Any qoptic::QOValidationVisitor::visitParameters(QOParser::ParametersContext *ctx) {
   for (auto parameter : ctx->elements) {
-    _parameters.push_back(parameter->getText());
+    _parameters.push_back( stripCurlyBraces( parameter->getText() ) );
   }
 
   return visitChildren(ctx);
@@ -27,7 +26,7 @@ antlrcpp::Any qoptic::QOValidationVisitor::visitDefinitionLine(qoptic::QOParser:
     ctx->indexedDefinition()->object->getText();
 
   // Validate against redefinition
-  if ( qoptic::contains(_operators, expressionName) || qoptic::contains(_indexedOperators, expressionName) ) {
+  if ( contains(_operators, expressionName) || contains(_indexedOperators, expressionName) ) {
     throw std::invalid_argument(
       "Expression error at line " + std::to_string(_lineNumber) + ":\n" +
       "Symbol '" + expressionName + "' was already defined and cannot be redefined."
@@ -40,7 +39,7 @@ antlrcpp::Any qoptic::QOValidationVisitor::visitDefinitionLine(qoptic::QOParser:
 antlrcpp::Any qoptic::QOValidationVisitor::visitSimpleDefinition(qoptic::QOParser::SimpleDefinitionContext *ctx) {
   _currentIndices.clear();
 
-  _operators.push_back(ctx->object->getText());
+  _operators.push_back( stripCurlyBraces( ctx->object->getText() ) );
 
   for (auto definition : ctx->definitions) {
     _operatorDefinitions.push_back(definition->getText());
@@ -50,13 +49,13 @@ antlrcpp::Any qoptic::QOValidationVisitor::visitSimpleDefinition(qoptic::QOParse
 }
 
 antlrcpp::Any qoptic::QOValidationVisitor::visitIndexedDefinition(qoptic::QOParser::IndexedDefinitionContext *ctx) {
-  _indexedOperators.push_back(ctx->object->getText());
+  _indexedOperators.push_back( stripCurlyBraces( ctx->object->getText() ) );
 
   // Validate for correct indices
   _currentIndices.clear();
   for (auto index : ctx->botindex()->indices) {
     std::string indexName = index->getText();
-    if (qoptic::contains(_subsystems, indexName)) {
+    if ( contains(_subsystems, indexName) ) {
       throw std::invalid_argument(
         "Index error at line " + std::to_string(_lineNumber) + ":\n" +
         "Index '" + indexName + "' denotes a subsystem and cannot an argument of " +
@@ -78,20 +77,19 @@ antlrcpp::Any qoptic::QOValidationVisitor::visitElementaryExpression(qoptic::QOP
   // Leave early if we have a bracketed expression or not an indexed expression
   if ( ctx->name == nullptr ) return visitChildren(ctx);
 
-  std::vector<std::string> indices;
-
   // Validate existence of expression
   std::string expressionName = stripCurlyBraces( ctx->name->getText() );
-  std::cout << expressionName << std::endl;
-  if ( !qoptic::contains(elementaryOperators, expressionName) && !qoptic::contains(_operators, expressionName) &&
-       !qoptic::contains(_indexedOperators,   expressionName) ) {
+  if ( !contains(elementaryOperators, expressionName) && !contains(_operators, expressionName) &&
+       !contains(_indexedOperators,   expressionName) && !contains(_parameters, expressionName)) {
     throw std::invalid_argument(
       "Symbol error at line " + std::to_string(_lineNumber) + ":\n" +
       "Symbol '" + expressionName + "' is not defined."
     );
   }
 
+
   // Validate indices, then add to index list
+  std::vector<std::string> indices;
   if ( ctx->botindex() != nullptr ) {
     for (auto index : ctx->botindex()->indices) { 
       std::string indexName = index->getText();
@@ -103,7 +101,7 @@ antlrcpp::Any qoptic::QOValidationVisitor::visitElementaryExpression(qoptic::QOP
         );
       }
 
-      indices.push_back(qoptic::formatIndex(_subsystems, indexName));
+      indices.push_back(formatIndex(_subsystems, indexName));
     }
   }
 
@@ -126,7 +124,7 @@ antlrcpp::Any qoptic::QOValidationVisitor::visitSumExpression(qoptic::QOParser::
     }
     _currentIndices.push_back(indexName);
     
-    indices.push_back(qoptic::formatIndex(_subsystems, indexName));
+    indices.push_back(formatIndex(_subsystems, indexName));
   }
   std::vector<std::string> lowerBounds(indices.size(), "1"); // TODO: Add support for integer bounds
 
