@@ -1,3 +1,9 @@
+parameter N
+
 H = sum_[i=3]^10(n_i)
 H = sum_[i,j=2]^N(n_i * n_j)
 H_{i, j::Subsystem} = n_[i,j]
+
+parameter V_[i,j](t)
+H_{Rabi}(t) = sum_[i,j]^N( V_[i,j](t) * sigmax_[i,j] )
+# H's argument has to equal the argument list of all the called parameters and other operators
