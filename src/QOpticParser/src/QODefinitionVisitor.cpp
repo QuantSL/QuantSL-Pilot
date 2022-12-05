@@ -138,23 +138,22 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitElementaryExpression(qoptic::QOP
     }
   }
 
-  std::string expression = "";
   if ( ctx->SIGMA() != nullptr ) {
-    expression += "embed(basis, indexDict[";
-    if      ( indices.size() == 0 ) expression += "1], σ";
-    else if ( indices.size() == 1 ) expression += indices[0] + "], σ";
-    else                            expression += "(" + separateByComma(indices) + ")], σ";
-    expression += ctx->SIGMA()->getText().back(); expression += ")";
+    _expression += "embed(basis, indexDict[";
+    if      ( indices.size() == 0 ) _expression += "1], σ";
+    else if ( indices.size() == 1 ) _expression += indices[0] + "], σ";
+    else                            _expression += "(" + separateByComma(indices) + ")], σ";
+    _expression += ctx->SIGMA()->getText().back(); _expression += ")";
   }
   else if ( ctx->SYMBOLNAME() != nullptr ) {
     std::string symbolName = stripCurlyBraces( ctx->SYMBOLNAME()->getText() );
-    if ( contains(_parameters, symbolName) ) expression += "parameters[:" + symbolName + "]";
+    if ( contains(_parameters, symbolName) ) _expression += "parameters[:" + symbolName + "]";
     else {
       if ( !contains(_requiredOperators, symbolName) ) _requiredOperators.push_back(symbolName);
-      expression += symbolName + "(" + separateByComma(indices) + ")";
+      _expression += symbolName;
+      if ( !indices.empty() ) _expression += "(" + separateByComma(indices) + ")";
     }
   }
-  _expression += expression;
 
   return visitChildren(ctx);
 }

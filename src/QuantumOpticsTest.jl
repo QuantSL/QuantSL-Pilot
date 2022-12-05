@@ -97,6 +97,7 @@ function generate_n_test(; parameters::Dict)
 	indexDict = Dict(key => val for (val, key) in enumerate(indices))
 
 	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+	operators = [σx, σy, σz, σp, σm]
 
 	return (i) -> embed(basis, indexDict[(:a, i)], σx) * embed(basis, indexDict[(:b, i)], σx)
 end
@@ -112,6 +113,7 @@ function generate_n(; parameters::Dict)
 	indexDict = Dict(key => val for (val, key) in enumerate(indices))
 
 	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+	operators = [σx, σy, σz, σp, σm]
 
 	return (i, j) -> embed(basis, indexDict[i], σz) * embed(basis, indexDict[j], σz)
 end
@@ -127,6 +129,7 @@ function generate_H_onsite(; parameters::Dict)
 	indexDict = Dict(key => val for (val, key) in enumerate(indices))
 
 	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+	operators = [σx, σy, σz, σp, σm]
 
 	n = _generate_n(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
 
@@ -148,6 +151,7 @@ function generate_H_int(; parameters::Dict)
 	indexDict = Dict(key => val for (val, key) in enumerate(indices))
 
 	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+	operators = [σx, σy, σz, σp, σm]
 
 	return parameters[:J] * sum(i -> 
 		sum(j -> 
@@ -167,6 +171,7 @@ function generate_H_lattice(; parameters::Dict)
 	indexDict = Dict(key => val for (val, key) in enumerate(indices))
 
 	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+	operators = [σx, σy, σz, σp, σm]
 
 	n_test = _generate_n_test(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
 
@@ -186,12 +191,13 @@ function generate_H(; parameters::Dict)
 	indexDict = Dict(key => val for (val, key) in enumerate(indices))
 
 	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+	operators = [σx, σy, σz, σp, σm]
 
 	H_onsite = _generate_H_onsite(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
 	H_int = _generate_H_int(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
 	H_lattice = _generate_H_lattice(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
 
-	return H_onsite() + H_int() + H_lattice()
+	return H_onsite + H_int + H_lattice
 end
 
 function _generate_n_test(; basis, indexDict, operators, parameters::Dict)
@@ -245,7 +251,7 @@ function _generate_H(; basis, indexDict, operators, parameters::Dict)
 	H_int = _generate_H_int(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
 	H_lattice = _generate_H_lattice(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
 
-	return H_onsite() + H_int() + H_lattice()
+	return H_onsite + H_int + H_lattice
 end
 
 struct OperatorContainer
