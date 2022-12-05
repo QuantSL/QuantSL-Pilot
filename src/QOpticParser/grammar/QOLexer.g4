@@ -16,7 +16,7 @@ SUBSYSTEM : 'subsystem';
 
 // Elementary Operators
 // TODO: let the elementary operators be defined by the user, by 'using Spin(1//2)' for example
-SIGMA : ('σ' | 'sigma') ('x' | 'y' | 'z' | '⁺' | '⁻');
+SIGMA : ('σ' | 'sigma') ('x' | 'y' | 'z' | 'p' | 'm' | '⁺' | '⁻');
 
 // Mathematical constructs
 EQUAL : '=';

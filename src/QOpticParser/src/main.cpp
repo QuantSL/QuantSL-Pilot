@@ -3,7 +3,7 @@
 #include "QOLexer.h"
 #include "QOParser.h"
 
-#include "QOVisitor.h"
+#include "QOValidationVisitor.h"
 #include "QOCodeGen.h"
 
 int main(int argc, const char* argv[]) {
@@ -15,7 +15,7 @@ int main(int argc, const char* argv[]) {
   antlr4::CommonTokenStream tokens(&lexer);
   qoptic::QOParser parser(&tokens);
 
-  qoptic::QOVisitor qovisitor;
+  qoptic::QOValidationVisitor qovisitor;
   try {
     qovisitor.visitMain(parser.main());
   }

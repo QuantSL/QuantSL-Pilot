@@ -8,7 +8,7 @@
 
 namespace qoptic {
 
-class  QOVisitor : public qoptic::QOParserBaseVisitor {
+class  QOValidationVisitor : public qoptic::QOParserBaseVisitor {
 private:
   int _lineNumber = 0;
 
@@ -28,9 +28,10 @@ public:
   // TODO: let the elementary operators be defined by the user, by 'using Spin(1//2)' for example
   const std::vector<std::string> elementaryOperators { "σx", "σy", "σz", "sigmax", "sigmay", "sigmaz", "sigmap", "sigmam" };
 
-  antlrcpp::Any visitLine(QOParser::LineContext *ctx) { _lineNumber++; return visitChildren(ctx); }
+  antlrcpp::Any visitLine(QOParser::LineContext *ctx) { _lineNumber++;  return visitChildren(ctx); }
   antlrcpp::Any visitParameters(          qoptic::QOParser::ParametersContext           *ctx);
   antlrcpp::Any visitSubsystems(          qoptic::QOParser::SubsystemsContext           *ctx);
+  antlrcpp::Any visitDefinitionLine(      qoptic::QOParser::DefinitionLineContext       *ctx);
   antlrcpp::Any visitSimpleDefinition(    qoptic::QOParser::SimpleDefinitionContext     *ctx);
   antlrcpp::Any visitIndexedDefinition(   qoptic::QOParser::IndexedDefinitionContext    *ctx);
   antlrcpp::Any visitElementaryExpression(qoptic::QOParser::ElementaryExpressionContext *ctx);

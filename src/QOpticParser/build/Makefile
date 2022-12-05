@@ -336,29 +336,29 @@ src/QOIndexVisitor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOIndexVisitor.cpp.s
 .PHONY : src/QOIndexVisitor.cpp.s
 
-src/QOVisitor.o: src/QOVisitor.cpp.o
-.PHONY : src/QOVisitor.o
+src/QOValidationVisitor.o: src/QOValidationVisitor.cpp.o
+.PHONY : src/QOValidationVisitor.o
 
 # target to build an object file
-src/QOVisitor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOVisitor.cpp.o
-.PHONY : src/QOVisitor.cpp.o
+src/QOValidationVisitor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOValidationVisitor.cpp.o
+.PHONY : src/QOValidationVisitor.cpp.o
 
-src/QOVisitor.i: src/QOVisitor.cpp.i
-.PHONY : src/QOVisitor.i
+src/QOValidationVisitor.i: src/QOValidationVisitor.cpp.i
+.PHONY : src/QOValidationVisitor.i
 
 # target to preprocess a source file
-src/QOVisitor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOVisitor.cpp.i
-.PHONY : src/QOVisitor.cpp.i
+src/QOValidationVisitor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOValidationVisitor.cpp.i
+.PHONY : src/QOValidationVisitor.cpp.i
 
-src/QOVisitor.s: src/QOVisitor.cpp.s
-.PHONY : src/QOVisitor.s
+src/QOValidationVisitor.s: src/QOValidationVisitor.cpp.s
+.PHONY : src/QOValidationVisitor.s
 
 # target to generate assembly for a file
-src/QOVisitor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOVisitor.cpp.s
-.PHONY : src/QOVisitor.cpp.s
+src/QOValidationVisitor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QOpticParser.dir/build.make CMakeFiles/QOpticParser.dir/src/QOValidationVisitor.cpp.s
+.PHONY : src/QOValidationVisitor.cpp.s
 
 src/StringTools.o: src/StringTools.cpp.o
 .PHONY : src/StringTools.o
@@ -441,9 +441,9 @@ help:
 	@echo "... src/QOIndexVisitor.o"
 	@echo "... src/QOIndexVisitor.i"
 	@echo "... src/QOIndexVisitor.s"
-	@echo "... src/QOVisitor.o"
-	@echo "... src/QOVisitor.i"
-	@echo "... src/QOVisitor.s"
+	@echo "... src/QOValidationVisitor.o"
+	@echo "... src/QOValidationVisitor.i"
+	@echo "... src/QOValidationVisitor.s"
 	@echo "... src/StringTools.o"
 	@echo "... src/StringTools.i"
 	@echo "... src/StringTools.s"

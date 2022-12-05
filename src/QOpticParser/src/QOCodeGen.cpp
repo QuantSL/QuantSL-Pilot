@@ -14,13 +14,7 @@ int qoptic::generateCode(std::string filename, QOParser &parser) {
   // Generate code to sample indices from each definition
   parser.reset();
   QOIndexVisitor indexVisitor;
-  try {
-    indexVisitor.visitMain(parser.main());
-  }
-  catch(const std::exception& e) {
-    std::cerr << e.what() << '\n';
-    return -1;
-  }
+  indexVisitor.visitMain(parser.main());
   file << indexVisitor.getIndexSampler();
 
   file << "function _generate_indices(; parameters::Dict)\n";
@@ -33,13 +27,7 @@ int qoptic::generateCode(std::string filename, QOParser &parser) {
   // Generate code to define each quantum object
   parser.reset();
   QODefinitionVisitor definitionVisitor;
-  try {
-    definitionVisitor.visitMain(parser.main());
-  }
-  catch(const std::exception& e) {
-    std::cerr << e.what() << '\n';
-    return -1;
-  }
+  definitionVisitor.visitMain(parser.main());
   file << definitionVisitor.getUserDefinitions();
   file << definitionVisitor.getDefinitions();
   file << definitionVisitor.generateOperatorContainer();
