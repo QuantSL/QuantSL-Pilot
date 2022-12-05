@@ -37,9 +37,8 @@ antlrcpp::Any qoptic::QOValidationVisitor::visitDefinitionLine(qoptic::QOParser:
 }
 
 antlrcpp::Any qoptic::QOValidationVisitor::visitSimpleDefinition(qoptic::QOParser::SimpleDefinitionContext *ctx) {
-  _currentIndices.clear();
-
   _operators.push_back( stripCurlyBraces( ctx->object->getText() ) );
+  _currentIndices.clear();
 
   for (auto definition : ctx->definitions) {
     _operatorDefinitions.push_back(definition->getText());

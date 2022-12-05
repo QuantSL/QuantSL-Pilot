@@ -21,7 +21,11 @@ private:
 
   std::string _definitions;
   std::string _userDefinitions;
+  std::vector<std::string> _requiredOperators;
+  std::string _expression;
   std::string _indentation;
+  void _generateFunctionHeader(std::string operatorName);
+  void _generateRequiredOperators();
 
   std::vector<std::string> _parameters;
   std::string _parameterCheck;

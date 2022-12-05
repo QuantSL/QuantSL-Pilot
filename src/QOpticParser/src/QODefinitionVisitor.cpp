@@ -10,12 +10,34 @@ void qoptic::QODefinitionVisitor::_generateParameterCheck() {
     "\tend\n\n");
 }
 
+void qoptic::QODefinitionVisitor::_generateFunctionHeader(std::string operatorName) {
+  // Generate function header and necessary objects, check parameters
+  _definitions += "function _generate_" + operatorName + "(; basis, indexDict, operators, parameters::Dict)\n";
+  _definitions += "\tσx, σy, σz, σp, σm = operators\n\n";
+
+  _userDefinitions += "function generate_" + operatorName + "(; parameters::Dict)\n";
+  _userDefinitions += _parameterCheck;
+  _userDefinitions += _basisAndOperatorsUser;
+}
+
+void qoptic::QODefinitionVisitor::_generateRequiredOperators() {
+  if ( _requiredOperators.empty() ) return;
+
+  std::string requiredOperators = "";
+  for (auto requiredOperator : _requiredOperators) {
+    requiredOperators += "\t" + requiredOperator + " = _generate_" + requiredOperator +
+      "(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)\n";
+  }
+
+  _definitions     += requiredOperators + "\n";
+  _userDefinitions += requiredOperators + "\n";
+}
+
 antlrcpp::Any qoptic::QODefinitionVisitor::visitMain(QOParser::MainContext *ctx) {
   _definitions = "";
 
   return visitChildren(ctx);
 }
-
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitParameters(QOParser::ParametersContext *ctx) {
   for (auto parameter : ctx->elements) {
@@ -35,43 +57,45 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitSubsystems(QOParser::SubsystemsC
 }
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitSimpleDefinition(qoptic::QOParser::SimpleDefinitionContext *ctx) {
-  _indentation = "\t";
+  _indentation = "\t"; _expression = ""; _requiredOperators.clear();
   std::string operatorName = stripCurlyBraces(ctx->object->getText());
   _operatorList.push_back(operatorName);
 
-  _definitions += "function _generate_" + operatorName +
-    "(; basis, indexDict, operators, parameters::Dict)\n";
-  _definitions += "\tσx, σy, σz, σp, σm = operators\n\n";
+  _generateFunctionHeader(operatorName);
 
-  _userDefinitions += "function generate_" + operatorName + "(; parameters::Dict)\n";
-  _userDefinitions += _parameterCheck;
-  _userDefinitions += _basisAndOperatorsUser;
-
-  _definitions += "\treturn "; _userDefinitions += "\treturn ";
+  // Generate function body
+  _expression += "\treturn ";
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  _definitions += "\nend\n\n"; _userDefinitions += "\nend\n\n";
+  _expression += "\nend\n\n";
+
+  // Generate required operators and add expression to definitions
+  _generateRequiredOperators();
+  _definitions     += _expression;
+  _userDefinitions += _expression;
+
   return visitedChildrenReturn;
 }
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitIndexedDefinition(qoptic::QOParser::IndexedDefinitionContext *ctx) {
-  _indentation += "\t";
+  _indentation = "\t"; _expression = ""; _requiredOperators.clear();
   std::vector<std::string> indices;
   for ( auto index : ctx->botindex()->indices ) indices.push_back(index->getText());
 
   std::string operatorName = stripCurlyBraces(ctx->object->getText());
   _operatorList.push_back(operatorName);
 
-  _definitions += "function _generate_" + operatorName + "(; basis, indexDict, operators, parameters::Dict)\n";
-  _definitions += "\tσx, σy, σz, σp, σm = operators\n\n";
+  _generateFunctionHeader(operatorName);
 
-  _userDefinitions += "function generate_" + operatorName + "(; parameters::Dict)\n";
-  _userDefinitions += _parameterCheck;
-  _userDefinitions += _basisAndOperatorsUser;
-
-  _definitions += "\treturn (" + separateByComma(indices) + ") -> ";
-  _userDefinitions += "\treturn (" + separateByComma(indices) + ") -> ";
+  // Generate function body
+  _expression += "\treturn (" + separateByComma(indices) + ") -> ";
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  _definitions += "\nend\n\n"; _userDefinitions += "\nend\n\n";
+  _expression += "\nend\n\n";
+
+  // Generate required operators and add expression to definitions
+  _generateRequiredOperators();
+  _definitions     += _expression;
+  _userDefinitions += _expression;
+
   return visitedChildrenReturn;
 }
 
@@ -86,7 +110,7 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitSumExpression(qoptic::QOParser::
     _indentation += "\t";
     sumResult += "sum(" + indices[i] + " -> \n" + _indentation;
   }
-  _definitions += sumResult; _userDefinitions += sumResult;
+  _expression += sumResult;
 
   // Further Parse Tree
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
@@ -99,7 +123,7 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitSumExpression(qoptic::QOParser::
     sumResult += isNumber(upperBound) ? upperBound + ";]\n" + _indentation + ")" :
       "parameters[:" + upperBound + "];]\n" + _indentation + ")" ;
   }
-  _definitions += sumResult; _userDefinitions += sumResult;
+  _expression += sumResult;
 
   return visitedChildrenReturn;
 }
@@ -125,17 +149,18 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitElementaryExpression(qoptic::QOP
   else if ( ctx->SYMBOLNAME() != nullptr ) {
     std::string symbolName = stripCurlyBraces( ctx->SYMBOLNAME()->getText() );
     if ( contains(_parameters, symbolName) ) expression += "parameters[:" + symbolName + "]";
-    else expression += "_generate_" + symbolName +
-      "(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)(" +
-      separateByComma(indices) + ")";
+    else {
+      if ( !contains(_requiredOperators, symbolName) ) _requiredOperators.push_back(symbolName);
+      expression += symbolName + "(" + separateByComma(indices) + ")";
+    }
   }
-  _definitions += expression; _userDefinitions += expression;
+  _expression += expression;
 
   return visitChildren(ctx);
 }
 
 antlrcpp::Any qoptic::QODefinitionVisitor::visitSign(qoptic::QOParser::SignContext *ctx) {
-  _definitions += ctx->getText() + " "; _userDefinitions += ctx->getText() + " ";
+  _expression += ctx->getText() + " ";
 
   return visitChildren(ctx);
 }
@@ -144,7 +169,7 @@ antlrcpp::Any qoptic::QODefinitionVisitor::visitArithmethic(qoptic::QOParser::Ar
   std::string arithmethicString = "";
   if ( ctx->getText() == "^" ) arithmethicString += ctx->getText();
   else arithmethicString += " " + ctx->getText() + " ";
-  _definitions += arithmethicString; _userDefinitions += arithmethicString;
+  _expression += arithmethicString;
 
   return visitChildren(ctx);
 }

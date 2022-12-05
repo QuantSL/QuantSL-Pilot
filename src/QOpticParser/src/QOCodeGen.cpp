@@ -9,7 +9,7 @@ int qoptic::generateCode(std::string filename, QOParser &parser) {
   std::ofstream file;
   file.open(filename);
 
-  file << "# using QuantumOptics\n\n";
+  file << "using QuantumOptics\n\n";
 
   // Generate code to sample indices from each definition
   parser.reset();
