@@ -7,3 +7,10 @@ H_{i, j::Subsystem} = n_[i,j]
 parameter V_[i,j](t)
 H_{Rabi}(t) = sum_[i,j]^N( V_[i,j](t) * sigmax_[i,j] )
 # H's argument has to equal the argument list of all the called parameters and other operators
+
+# ----------------------------------------
+# Adding subsystem indices
+subsystem a, b
+H = sum_i^N( sigmap_i * sigmam_[i+1] + sigmam_i * sigmap_[i+1] )
+H_{total} = H_a + H_b + sum_i^N( sigmaz_[a,i] * sigmaz_[b,i] )
+# The subindex call implicitly expends onto the spin operators
