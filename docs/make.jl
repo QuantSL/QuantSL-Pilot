@@ -2,7 +2,7 @@ using Documenter
 
 makedocs(
   sitename = "Quantum Optics Generator",
-  # modules = [],
+  # modules = [QuantumOpticsPilotDocs],
   # format = Documenter.HTML(assets = ["assets/favicon.ico"]),
   pages = [
     "index.md",
