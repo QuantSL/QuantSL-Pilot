@@ -8,7 +8,7 @@
 
 namespace qdsl {
 
-class  QOValidationVisitor : public qdsl::QDSLParserBaseVisitor {
+class  ITensorValidationVisitor : public qdsl::QDSLParserBaseVisitor {
 private:
   int _lineNumber = 0;
 

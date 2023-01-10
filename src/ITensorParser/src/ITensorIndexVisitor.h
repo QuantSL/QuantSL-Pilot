@@ -8,7 +8,7 @@
 
 namespace qdsl {
 
-class  QOIndexVisitor : public qdsl::QDSLParserBaseVisitor {
+class  ITensorIndexVisitor : public qdsl::QDSLParserBaseVisitor {
 private:
   std::string _indexSampler;
   std::string _indentation;

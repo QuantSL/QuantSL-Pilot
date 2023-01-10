@@ -11,6 +11,8 @@ _research
 
 src/QOpticParser/build/
 src/QOpticParser/grammar/.antlr
+src/ITensorParser/build/
+src/ITensorParser/grammar/.antlr
 
 docs/build/
 

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace qoptic {
+namespace qdsl {
 
 bool contains(std::vector<std::string> strings, std::string query);
 bool isNumber(std::string string);
@@ -22,4 +22,4 @@ std::string toSymbol(std::string string);
 void tokenizeSummations(std::string &expression);
 void insertSpaces(std::string &expression);
 
-} // namespace qoptic
+} // namespace qdsl

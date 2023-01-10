@@ -8,7 +8,7 @@
 
 namespace qdsl {
 
-class  QODefinitionVisitor : public qdsl::QDSLParserBaseVisitor {
+class ITensorDefinitionVisitor : public qdsl::QDSLParserBaseVisitor {
 private:
   const std::string _basisAndOperators = "\tindices = _generate_indices(parameters = parameters)\n"
     "\tbasis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )\n\n"

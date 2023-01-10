@@ -1,8 +1,8 @@
-#include "QOCodeGen.h"
+#include "ITensorCodeGen.h"
 #include <fstream>
 
-#include "QOIndexVisitor.h"
-#include "QODefinitionVisitor.h"
+#include "ITensorIndexVisitor.h"
+#include "ITensorDefinitionVisitor.h"
 #include "../../general/StringTools.h"
 
 int qdsl::generateCode(std::string filename, QDSLParser &parser) {
@@ -13,7 +13,7 @@ int qdsl::generateCode(std::string filename, QDSLParser &parser) {
 
   // Generate code to sample indices from each definition
   parser.reset();
-  QOIndexVisitor indexVisitor;
+  ITensorIndexVisitor indexVisitor;
   indexVisitor.visitMain(parser.main());
   file << indexVisitor.getIndexSampler();
 
@@ -26,7 +26,7 @@ int qdsl::generateCode(std::string filename, QDSLParser &parser) {
 
   // Generate code to define each quantum object
   parser.reset();
-  QODefinitionVisitor definitionVisitor;
+  ITensorDefinitionVisitor definitionVisitor;
   definitionVisitor.visitMain(parser.main());
   file << definitionVisitor.getUserDefinitions();
   file << definitionVisitor.getDefinitions();

@@ -40,10 +40,10 @@ include_directories(${ANTLR_SampleGrammarLexer_OUTPUT_DIR})
 include_directories(${ANTLR_SampleGrammarParser_OUTPUT_DIR})
 
 # add generated grammar to demo binary target
-add_executable(QDSLParser src/main.cpp
-               src/QOValidationVisitor.cpp src/QOIndexVisitor.cpp
-               src/QODefinitionVisitor.cpp src/QOCodeGen.cpp
+add_executable(ITensorParser src/main.cpp
+               src/ITensorValidationVisitor.cpp src/ITensorIndexVisitor.cpp
+               src/ITensorDefinitionVisitor.cpp src/ITensorCodeGen.cpp
                ../general/StringTools.cpp
                ${ANTLR_SampleGrammarLexer_CXX_OUTPUTS}
                ${ANTLR_SampleGrammarParser_CXX_OUTPUTS})
-target_link_libraries(QDSLParser antlr4_static)
+target_link_libraries(ITensorParser antlr4_static)

@@ -1,9 +1,9 @@
-#include "QOValidationVisitor.h"
+#include "ITensorValidationVisitor.h"
 #include <stdexcept>
 
 #include "../../general/StringTools.h"
 
-antlrcpp::Any qdsl::QOValidationVisitor::visitParameters(QDSLParser::ParametersContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitParameters(QDSLParser::ParametersContext *ctx) {
   for (auto parameter : ctx->elements) {
     _parameters.push_back( stripCurlyBraces( parameter->getText() ) );
   }
@@ -11,7 +11,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitParameters(QDSLParser::ParametersC
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::QOValidationVisitor::visitSubsystems(QDSLParser::SubsystemsContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitSubsystems(QDSLParser::SubsystemsContext *ctx) {
   for (auto subsystem : ctx->elements) {
     _subsystems.push_back(subsystem->getText());
   }
@@ -20,7 +20,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitSubsystems(QDSLParser::SubsystemsC
 }
 
 
-antlrcpp::Any qdsl::QOValidationVisitor::visitDefinitionLine(qdsl::QDSLParser::DefinitionLineContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitDefinitionLine(qdsl::QDSLParser::DefinitionLineContext *ctx) {
   std::string expressionName = ctx->simpleDefinition() != nullptr ?
     ctx->simpleDefinition()->object->getText() :
     ctx->indexedDefinition()->object->getText();
@@ -36,7 +36,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitDefinitionLine(qdsl::QDSLParser::D
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::QOValidationVisitor::visitSimpleDefinition(qdsl::QDSLParser::SimpleDefinitionContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitSimpleDefinition(qdsl::QDSLParser::SimpleDefinitionContext *ctx) {
   _operators.push_back( stripCurlyBraces( ctx->object->getText() ) );
   _currentIndices.clear();
 
@@ -47,7 +47,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitSimpleDefinition(qdsl::QDSLParser:
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::QOValidationVisitor::visitIndexedDefinition(qdsl::QDSLParser::IndexedDefinitionContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitIndexedDefinition(qdsl::QDSLParser::IndexedDefinitionContext *ctx) {
   _indexedOperators.push_back( stripCurlyBraces( ctx->object->getText() ) );
 
   // Validate for correct indices
@@ -72,7 +72,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitIndexedDefinition(qdsl::QDSLParser
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::QOValidationVisitor::visitElementaryExpression(qdsl::QDSLParser::ElementaryExpressionContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitElementaryExpression(qdsl::QDSLParser::ElementaryExpressionContext *ctx) {
   // Leave early if we have a bracketed expression or not an indexed expression
   if ( ctx->name == nullptr ) return visitChildren(ctx);
 
@@ -107,7 +107,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitElementaryExpression(qdsl::QDSLPar
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::QOValidationVisitor::visitSumExpression(qdsl::QDSLParser::SumExpressionContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitSumExpression(qdsl::QDSLParser::SumExpressionContext *ctx) {
   // Store old indices and tree context
   std::vector<std::string> oldIndices = _currentIndices;
   
@@ -143,7 +143,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitSumExpression(qdsl::QDSLParser::Su
 }
 
 
-std::vector<std::string> qdsl::QOValidationVisitor::getOperatorsDebug() {
+std::vector<std::string> qdsl::ITensorValidationVisitor::getOperatorsDebug() {
   std::vector<std::string> results(_operators);
   for (int i = 0; i < results.size(); ++i) {
     results[i] += " = " + _operatorDefinitions[i];
@@ -152,7 +152,7 @@ std::vector<std::string> qdsl::QOValidationVisitor::getOperatorsDebug() {
   return results;
 }
 
-std::vector<std::string> qdsl::QOValidationVisitor::getIndexedOperatorsDebug() {
+std::vector<std::string> qdsl::ITensorValidationVisitor::getIndexedOperatorsDebug() {
   std::vector<std::string> results(_indexedOperators);
   for (int i = 0; i < results.size(); ++i) {
     results[i] += " = " + _indexedOperatorDefinitions[i] + "\t\tparsed indices: ";

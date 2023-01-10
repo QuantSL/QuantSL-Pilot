@@ -1,0 +1,10 @@
+Comment=1
+WS=2
+NEWLINE=3
+PARAMETER=4
+EQUAL=5
+NAME=6
+Sigma=7
+COMMA=8
+'parameter'=4
+'='=5

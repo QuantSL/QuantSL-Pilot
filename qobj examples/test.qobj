@@ -7,8 +7,8 @@ subsystem a, b
 n_{test}_i = σx_[a, i] * σx_[b, i]
 n_[i, j] = σz_i * σz_j # TODO: currently this generates the same symbol as the line above. Should I fix or forbid it?
 
-H_{onsite}  = U_{int} * sum_[i,j]^N(n_[i, j])
-H_{int}     = J * sum_i^N( sum_j^N ( σx_i * σx_j ) )
-H_{lattice} = sum_i^N(n_{test}_i * n_{test}_i * σz_i)
+H_{int}     = U_{int} * sum_[i,j]^N(n_[i, j])
+H_{hopping} = J * sum_i^N( sum_j^N ( σx_i * σx_j ) )
+# H_{lattice} = sum_i^N(n_{test}_i * n_{test}_i * σz_i)
 
-H = H_{onsite} + H_{int} + H_{lattice}
+H = H_{int} + H_{hopping} # + H_{lattice}
