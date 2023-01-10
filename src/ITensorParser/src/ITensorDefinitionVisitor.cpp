@@ -55,7 +55,7 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSubsystems(QDSLParser::Subsys
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSimpleDefinition(qdsl::QDSLParser::SimpleDefinitionContext *ctx) {
+antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSimpleDefinition(QDSLParser::SimpleDefinitionContext *ctx) {
   _indentation = "\t"; _expression = ""; _requiredOperators.clear();
   std::string operatorName = stripCurlyBraces(ctx->object->getText());
   _operatorList.push_back(operatorName);
@@ -75,7 +75,7 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSimpleDefinition(qdsl::QDSLPa
   return visitedChildrenReturn;
 }
 
-antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitIndexedDefinition(qdsl::QDSLParser::IndexedDefinitionContext *ctx) {
+antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitIndexedDefinition(QDSLParser::IndexedDefinitionContext *ctx) {
   _indentation = "\t"; _expression = ""; _requiredOperators.clear();
   std::vector<std::string> indices;
   for ( auto index : ctx->botindex()->indices ) indices.push_back(index->getText());
@@ -98,7 +98,7 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitIndexedDefinition(qdsl::QDSLP
   return visitedChildrenReturn;
 }
 
-antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSumExpression(qdsl::QDSLParser::SumExpressionContext *ctx) {
+antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSumExpression(QDSLParser::SumExpressionContext *ctx) {
   std::vector<std::string> indices;
   for ( auto index : ctx->boundary->botindex()->indices ) indices.push_back(index->getText());
   std::string upperBound = ctx->boundary->topindex()->index->getText();
@@ -127,7 +127,7 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSumExpression(qdsl::QDSLParse
   return visitedChildrenReturn;
 }
 
-antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitElementaryExpression(qdsl::QDSLParser::ElementaryExpressionContext *ctx) {
+antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitElementaryExpression(QDSLParser::ElementaryExpressionContext *ctx) {
   std::vector<std::string> indices;
   if (ctx->botindex() != nullptr) {
     for ( auto index : ctx->botindex()->indices ) {
@@ -157,13 +157,13 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitElementaryExpression(qdsl::QD
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSign(qdsl::QDSLParser::SignContext *ctx) {
+antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSign(QDSLParser::SignContext *ctx) {
   _expression += ctx->getText() + " ";
 
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitArithmethic(qdsl::QDSLParser::ArithmethicContext *ctx) {
+antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitArithmethic(QDSLParser::ArithmethicContext *ctx) {
   std::string arithmethicString = "";
   if ( ctx->getText() == "^" ) arithmethicString += ctx->getText();
   else arithmethicString += " " + ctx->getText() + " ";

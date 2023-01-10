@@ -20,7 +20,7 @@ antlrcpp::Any qdsl::ITensorValidationVisitor::visitSubsystems(QDSLParser::Subsys
 }
 
 
-antlrcpp::Any qdsl::ITensorValidationVisitor::visitDefinitionLine(qdsl::QDSLParser::DefinitionLineContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitDefinitionLine(QDSLParser::DefinitionLineContext *ctx) {
   std::string expressionName = ctx->simpleDefinition() != nullptr ?
     ctx->simpleDefinition()->object->getText() :
     ctx->indexedDefinition()->object->getText();
@@ -36,7 +36,7 @@ antlrcpp::Any qdsl::ITensorValidationVisitor::visitDefinitionLine(qdsl::QDSLPars
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::ITensorValidationVisitor::visitSimpleDefinition(qdsl::QDSLParser::SimpleDefinitionContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitSimpleDefinition(QDSLParser::SimpleDefinitionContext *ctx) {
   _operators.push_back( stripCurlyBraces( ctx->object->getText() ) );
   _currentIndices.clear();
 
@@ -47,7 +47,7 @@ antlrcpp::Any qdsl::ITensorValidationVisitor::visitSimpleDefinition(qdsl::QDSLPa
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::ITensorValidationVisitor::visitIndexedDefinition(qdsl::QDSLParser::IndexedDefinitionContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitIndexedDefinition(QDSLParser::IndexedDefinitionContext *ctx) {
   _indexedOperators.push_back( stripCurlyBraces( ctx->object->getText() ) );
 
   // Validate for correct indices
@@ -72,7 +72,7 @@ antlrcpp::Any qdsl::ITensorValidationVisitor::visitIndexedDefinition(qdsl::QDSLP
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::ITensorValidationVisitor::visitElementaryExpression(qdsl::QDSLParser::ElementaryExpressionContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitElementaryExpression(QDSLParser::ElementaryExpressionContext *ctx) {
   // Leave early if we have a bracketed expression or not an indexed expression
   if ( ctx->name == nullptr ) return visitChildren(ctx);
 
@@ -107,7 +107,7 @@ antlrcpp::Any qdsl::ITensorValidationVisitor::visitElementaryExpression(qdsl::QD
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::ITensorValidationVisitor::visitSumExpression(qdsl::QDSLParser::SumExpressionContext *ctx) {
+antlrcpp::Any qdsl::ITensorValidationVisitor::visitSumExpression(QDSLParser::SumExpressionContext *ctx) {
   // Store old indices and tree context
   std::vector<std::string> oldIndices = _currentIndices;
   

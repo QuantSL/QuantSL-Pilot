@@ -37,15 +37,15 @@ private:
   std::vector<std::string> _operatorList;
 
 public:
-  antlrcpp::Any visitMain(                qdsl::QDSLParser::MainContext                 *ctx);
-  antlrcpp::Any visitParameters(          qdsl::QDSLParser::ParametersContext           *ctx);
-  antlrcpp::Any visitSubsystems(          qdsl::QDSLParser::SubsystemsContext           *ctx);
-  antlrcpp::Any visitSimpleDefinition(    qdsl::QDSLParser::SimpleDefinitionContext     *ctx);
-  antlrcpp::Any visitIndexedDefinition(   qdsl::QDSLParser::IndexedDefinitionContext    *ctx);
-  antlrcpp::Any visitSumExpression(       qdsl::QDSLParser::SumExpressionContext        *ctx);
-  antlrcpp::Any visitElementaryExpression(qdsl::QDSLParser::ElementaryExpressionContext *ctx);
-  antlrcpp::Any visitSign(                qdsl::QDSLParser::SignContext                 *ctx);
-  antlrcpp::Any visitArithmethic(         qdsl::QDSLParser::ArithmethicContext          *ctx);
+  antlrcpp::Any visitMain(                QDSLParser::MainContext                 *ctx);
+  antlrcpp::Any visitParameters(          QDSLParser::ParametersContext           *ctx);
+  antlrcpp::Any visitSubsystems(          QDSLParser::SubsystemsContext           *ctx);
+  antlrcpp::Any visitSimpleDefinition(    QDSLParser::SimpleDefinitionContext     *ctx);
+  antlrcpp::Any visitIndexedDefinition(   QDSLParser::IndexedDefinitionContext    *ctx);
+  antlrcpp::Any visitSumExpression(       QDSLParser::SumExpressionContext        *ctx);
+  antlrcpp::Any visitElementaryExpression(QDSLParser::ElementaryExpressionContext *ctx);
+  antlrcpp::Any visitSign(                QDSLParser::SignContext                 *ctx);
+  antlrcpp::Any visitArithmethic(         QDSLParser::ArithmethicContext          *ctx);
 
   std::string getDefinitions()     { return _definitions; };
   std::string getUserDefinitions() { return _userDefinitions; };

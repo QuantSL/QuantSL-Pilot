@@ -29,13 +29,13 @@ public:
   const std::vector<std::string> elementaryOperators { "σx", "σy", "σz", "sigmax", "sigmay", "sigmaz", "sigmap", "sigmam" };
 
   antlrcpp::Any visitLine(QDSLParser::LineContext *ctx) { _lineNumber++;  return visitChildren(ctx); }
-  antlrcpp::Any visitParameters(          qdsl::QDSLParser::ParametersContext           *ctx);
-  antlrcpp::Any visitSubsystems(          qdsl::QDSLParser::SubsystemsContext           *ctx);
-  antlrcpp::Any visitDefinitionLine(      qdsl::QDSLParser::DefinitionLineContext       *ctx);
-  antlrcpp::Any visitSimpleDefinition(    qdsl::QDSLParser::SimpleDefinitionContext     *ctx);
-  antlrcpp::Any visitIndexedDefinition(   qdsl::QDSLParser::IndexedDefinitionContext    *ctx);
-  antlrcpp::Any visitElementaryExpression(qdsl::QDSLParser::ElementaryExpressionContext *ctx);
-  antlrcpp::Any visitSumExpression(       qdsl::QDSLParser::SumExpressionContext        *ctx);
+  antlrcpp::Any visitParameters(          QDSLParser::ParametersContext           *ctx);
+  antlrcpp::Any visitSubsystems(          QDSLParser::SubsystemsContext           *ctx);
+  antlrcpp::Any visitDefinitionLine(      QDSLParser::DefinitionLineContext       *ctx);
+  antlrcpp::Any visitSimpleDefinition(    QDSLParser::SimpleDefinitionContext     *ctx);
+  antlrcpp::Any visitIndexedDefinition(   QDSLParser::IndexedDefinitionContext    *ctx);
+  antlrcpp::Any visitElementaryExpression(QDSLParser::ElementaryExpressionContext *ctx);
+  antlrcpp::Any visitSumExpression(       QDSLParser::SumExpressionContext        *ctx);
 
   std::vector<std::string> getParameters()       { return _parameters; }
   std::vector<std::string> getSubsystems()       { return _subsystems; }

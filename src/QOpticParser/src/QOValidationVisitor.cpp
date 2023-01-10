@@ -36,7 +36,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitDefinitionLine(qdsl::QDSLParser::D
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::QOValidationVisitor::visitSimpleDefinition(qdsl::QDSLParser::SimpleDefinitionContext *ctx) {
+antlrcpp::Any qdsl::QOValidationVisitor::visitSimpleDefinition(QDSLParser::SimpleDefinitionContext *ctx) {
   _operators.push_back( stripCurlyBraces( ctx->object->getText() ) );
   _currentIndices.clear();
 
@@ -47,7 +47,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitSimpleDefinition(qdsl::QDSLParser:
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::QOValidationVisitor::visitIndexedDefinition(qdsl::QDSLParser::IndexedDefinitionContext *ctx) {
+antlrcpp::Any qdsl::QOValidationVisitor::visitIndexedDefinition(QDSLParser::IndexedDefinitionContext *ctx) {
   _indexedOperators.push_back( stripCurlyBraces( ctx->object->getText() ) );
 
   // Validate for correct indices
@@ -72,7 +72,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitIndexedDefinition(qdsl::QDSLParser
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::QOValidationVisitor::visitElementaryExpression(qdsl::QDSLParser::ElementaryExpressionContext *ctx) {
+antlrcpp::Any qdsl::QOValidationVisitor::visitElementaryExpression(QDSLParser::ElementaryExpressionContext *ctx) {
   // Leave early if we have a bracketed expression or not an indexed expression
   if ( ctx->name == nullptr ) return visitChildren(ctx);
 
@@ -107,7 +107,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitElementaryExpression(qdsl::QDSLPar
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::QOValidationVisitor::visitSumExpression(qdsl::QDSLParser::SumExpressionContext *ctx) {
+antlrcpp::Any qdsl::QOValidationVisitor::visitSumExpression(QDSLParser::SumExpressionContext *ctx) {
   // Store old indices and tree context
   std::vector<std::string> oldIndices = _currentIndices;
   
