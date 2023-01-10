@@ -1,6 +1,6 @@
 #include "QODefinitionVisitor.h"
 
-#include "../../general/StringTools.h"
+#include "../../shared/StringTools.h"
 
 void qdsl::QODefinitionVisitor::_generateParameterCheck() {
   _parameterCheck = std::string("\tfor parameter in [" +

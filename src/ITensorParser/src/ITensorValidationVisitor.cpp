@@ -1,7 +1,7 @@
 #include "ITensorValidationVisitor.h"
 #include <stdexcept>
 
-#include "../../general/StringTools.h"
+#include "../../shared/StringTools.h"
 
 antlrcpp::Any qdsl::ITensorValidationVisitor::visitParameters(QDSLParser::ParametersContext *ctx) {
   for (auto parameter : ctx->elements) {

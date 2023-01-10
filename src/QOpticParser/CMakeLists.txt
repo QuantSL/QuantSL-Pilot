@@ -41,9 +41,8 @@ include_directories(${ANTLR_SampleGrammarParser_OUTPUT_DIR})
 
 # add generated grammar to demo binary target
 add_executable(QDSLParser src/main.cpp
-               src/QOValidationVisitor.cpp src/QOIndexVisitor.cpp
-               src/QODefinitionVisitor.cpp src/QOCodeGen.cpp
-               ../general/StringTools.cpp
+               src/QOValidationVisitor.cpp src/QODefinitionVisitor.cpp src/QOCodeGen.cpp
+               ../shared/IndexVisitor.cpp ../shared/StringTools.cpp
                ${ANTLR_SampleGrammarLexer_CXX_OUTPUTS}
                ${ANTLR_SampleGrammarParser_CXX_OUTPUTS})
 target_link_libraries(QDSLParser antlr4_static)

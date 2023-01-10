@@ -11,14 +11,10 @@ namespace qdsl {
 class ITensorDefinitionVisitor : public qdsl::QDSLParserBaseVisitor {
 private:
   const std::string _basisAndOperators = "\tindices = _generate_indices(parameters = parameters)\n"
-    "\tbasis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )\n\n"
     "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n"
     "\toperators = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]\n\n";
   const std::string _basisAndOperatorsUser = "\tindices = _generate_indices(parameters = parameters)\n"
-    "\tbasis = reduce( ⊗, repeat( [SpinBasis(1//2)], length(indices) ) )\n\n"
-    "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n"
-    "\tσx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]\n"
-    "\toperators = [σx, σy, σz, σp, σm]\n\n";
+    "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n";
 
   std::string _definitions;
   std::string _userDefinitions;

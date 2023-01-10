@@ -44,5 +44,5 @@ int main(int argc, const char* argv[]) {
     std::cout << object << std::endl;
   }
 
-  return qdsl::generateCode("../../QuantumOpticsTest.jl", parser);
+  return qdsl::generateCode("../../ITensorTest.jl", parser);
 }

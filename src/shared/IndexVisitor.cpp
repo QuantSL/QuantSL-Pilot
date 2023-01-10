@@ -1,8 +1,8 @@
-#include "QOIndexVisitor.h"
+#include "IndexVisitor.h"
 
-#include "../../general/StringTools.h"
+#include "StringTools.h"
 
-void qdsl::QOIndexVisitor::_generateParameterCheck() {
+void qdsl::IndexVisitor::_generateParameterCheck() {
   _parameterCheck = std::string("\tfor parameter in [" +
     separateByComma(toSymbol(stripCurlyBraces(_parameters))) +
     "] # Check if all parameters are defined\n"
@@ -10,14 +10,14 @@ void qdsl::QOIndexVisitor::_generateParameterCheck() {
     "\tend\n\n");
 }
 
-antlrcpp::Any qdsl::QOIndexVisitor::visitMain(QDSLParser::MainContext *ctx) {
+antlrcpp::Any qdsl::IndexVisitor::visitMain(QDSLParser::MainContext *ctx) {
   _indexSampler = "";
 
   return visitChildren(ctx);
 }
 
 
-antlrcpp::Any qdsl::QOIndexVisitor::visitParameters(QDSLParser::ParametersContext *ctx) {
+antlrcpp::Any qdsl::IndexVisitor::visitParameters(QDSLParser::ParametersContext *ctx) {
   for (auto parameter : ctx->elements) {
     _parameters.push_back(parameter->getText());
   }
@@ -26,7 +26,7 @@ antlrcpp::Any qdsl::QOIndexVisitor::visitParameters(QDSLParser::ParametersContex
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::QOIndexVisitor::visitSubsystems(QDSLParser::SubsystemsContext *ctx) {
+antlrcpp::Any qdsl::IndexVisitor::visitSubsystems(QDSLParser::SubsystemsContext *ctx) {
   for (auto subsystem : ctx->elements) {
     _subsystems.push_back(subsystem->getText());
   }
@@ -34,7 +34,7 @@ antlrcpp::Any qdsl::QOIndexVisitor::visitSubsystems(QDSLParser::SubsystemsContex
   return visitChildren(ctx);
 }
 
-antlrcpp::Any qdsl::QOIndexVisitor::visitSimpleDefinition(qdsl::QDSLParser::SimpleDefinitionContext *ctx) {
+antlrcpp::Any qdsl::IndexVisitor::visitSimpleDefinition(QDSLParser::SimpleDefinitionContext *ctx) {
   _indentation = "\t";
 
   std::string operatorName = stripCurlyBraces(ctx->object->getText());
@@ -51,7 +51,7 @@ antlrcpp::Any qdsl::QOIndexVisitor::visitSimpleDefinition(qdsl::QDSLParser::Simp
   return visitedChildrenReturn;
 }
 
-antlrcpp::Any qdsl::QOIndexVisitor::visitIndexedDefinition(qdsl::QDSLParser::IndexedDefinitionContext *ctx) {
+antlrcpp::Any qdsl::IndexVisitor::visitIndexedDefinition(QDSLParser::IndexedDefinitionContext *ctx) {
   _indentation += "\t";
 
   std::string operatorName = stripCurlyBraces(ctx->object->getText());
@@ -70,7 +70,7 @@ antlrcpp::Any qdsl::QOIndexVisitor::visitIndexedDefinition(qdsl::QDSLParser::Ind
   return visitedChildrenReturn;
 }
 
-antlrcpp::Any qdsl::QOIndexVisitor::visitSumExpression(qdsl::QDSLParser::SumExpressionContext *ctx) {
+antlrcpp::Any qdsl::IndexVisitor::visitSumExpression(QDSLParser::SumExpressionContext *ctx) {
   std::vector<std::string> indices;
   for ( auto index : ctx->boundary->botindex()->indices ) indices.push_back(index->getText());
   std::string upperBound = ctx->boundary->topindex()->index->getText();
@@ -94,7 +94,7 @@ antlrcpp::Any qdsl::QOIndexVisitor::visitSumExpression(qdsl::QDSLParser::SumExpr
   return visitedChildrenReturn;
 }
 
-antlrcpp::Any qdsl::QOIndexVisitor::visitElementaryExpression(qdsl::QDSLParser::ElementaryExpressionContext *ctx) {
+antlrcpp::Any qdsl::IndexVisitor::visitElementaryExpression(QDSLParser::ElementaryExpressionContext *ctx) {
   std::vector<std::string> indices;
   if (ctx->botindex() != nullptr) {
     for ( auto index : ctx->botindex()->indices ) {

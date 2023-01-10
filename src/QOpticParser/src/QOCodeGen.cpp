@@ -1,9 +1,10 @@
 #include "QOCodeGen.h"
 #include <fstream>
 
-#include "QOIndexVisitor.h"
 #include "QODefinitionVisitor.h"
-#include "../../general/StringTools.h"
+
+#include "../../shared/IndexVisitor.h"
+#include "../../shared/StringTools.h"
 
 int qdsl::generateCode(std::string filename, QDSLParser &parser) {
   std::ofstream file;
@@ -13,7 +14,7 @@ int qdsl::generateCode(std::string filename, QDSLParser &parser) {
 
   // Generate code to sample indices from each definition
   parser.reset();
-  QOIndexVisitor indexVisitor;
+  IndexVisitor indexVisitor;
   indexVisitor.visitMain(parser.main());
   file << indexVisitor.getIndexSampler();
 

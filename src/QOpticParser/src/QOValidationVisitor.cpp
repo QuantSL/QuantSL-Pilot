@@ -1,7 +1,7 @@
 #include "QOValidationVisitor.h"
 #include <stdexcept>
 
-#include "../../general/StringTools.h"
+#include "../../shared/StringTools.h"
 
 antlrcpp::Any qdsl::QOValidationVisitor::visitParameters(QDSLParser::ParametersContext *ctx) {
   for (auto parameter : ctx->elements) {

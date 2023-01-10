@@ -1,19 +1,20 @@
 #include "ITensorCodeGen.h"
 #include <fstream>
 
-#include "ITensorIndexVisitor.h"
 #include "ITensorDefinitionVisitor.h"
-#include "../../general/StringTools.h"
+
+#include "../../shared/IndexVisitor.h"
+#include "../../shared/StringTools.h"
 
 int qdsl::generateCode(std::string filename, QDSLParser &parser) {
   std::ofstream file;
   file.open(filename);
 
-  file << "using QuantumOptics\n\n";
+  file << "using ITensor\n\n";
 
   // Generate code to sample indices from each definition
   parser.reset();
-  ITensorIndexVisitor indexVisitor;
+  IndexVisitor indexVisitor;
   indexVisitor.visitMain(parser.main());
   file << indexVisitor.getIndexSampler();
 

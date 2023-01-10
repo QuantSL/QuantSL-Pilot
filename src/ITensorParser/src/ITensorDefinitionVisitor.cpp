@@ -1,6 +1,6 @@
 #include "ITensorDefinitionVisitor.h"
 
-#include "../../general/StringTools.h"
+#include "../../shared/StringTools.h"
 
 void qdsl::ITensorDefinitionVisitor::_generateParameterCheck() {
   _parameterCheck = std::string("\tfor parameter in [" +
@@ -12,8 +12,7 @@ void qdsl::ITensorDefinitionVisitor::_generateParameterCheck() {
 
 void qdsl::ITensorDefinitionVisitor::_generateFunctionHeader(std::string operatorName) {
   // Generate function header and necessary objects, check parameters
-  _definitions += "function _generate_" + operatorName + "(; basis, indexDict, operators, parameters::Dict)\n";
-  _definitions += "\tσx, σy, σz, σp, σm = operators\n\n";
+  _definitions += "function _generate_" + operatorName + "(; indexDict, opSum, parameters::Dict)\n";
 
   _userDefinitions += "function generate_" + operatorName + "(; parameters::Dict)\n";
   _userDefinitions += _parameterCheck;
@@ -26,7 +25,7 @@ void qdsl::ITensorDefinitionVisitor::_generateRequiredOperators() {
   std::string requiredOperators = "";
   for (auto requiredOperator : _requiredOperators) {
     requiredOperators += "\t" + requiredOperator + " = _generate_" + requiredOperator +
-      "(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)\n";
+      "(; indexDict = indexDict, opSum = opSum, parameters = parameters)\n";
   }
 
   _definitions     += requiredOperators + "\n";

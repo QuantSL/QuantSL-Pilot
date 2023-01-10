@@ -41,9 +41,8 @@ include_directories(${ANTLR_SampleGrammarParser_OUTPUT_DIR})
 
 # add generated grammar to demo binary target
 add_executable(ITensorParser src/main.cpp
-               src/ITensorValidationVisitor.cpp src/ITensorIndexVisitor.cpp
-               src/ITensorDefinitionVisitor.cpp src/ITensorCodeGen.cpp
-               ../general/StringTools.cpp
+               src/ITensorValidationVisitor.cpp src/ITensorDefinitionVisitor.cpp src/ITensorCodeGen.cpp
+               ../shared/IndexVisitor.cpp ../shared/StringTools.cpp
                ${ANTLR_SampleGrammarLexer_CXX_OUTPUTS}
                ${ANTLR_SampleGrammarParser_CXX_OUTPUTS})
 target_link_libraries(ITensorParser antlr4_static)

@@ -168,29 +168,53 @@ QDSLParser/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/build
 .PHONY : QDSLParser/fast
 
-Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.o: Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.o
-.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.o
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.o: Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.o
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.o
 
 # target to build an object file
-Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.o
-.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.o
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.o
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.o
 
-Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.i: Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.i
-.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.i
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.i: Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.i
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.i
 
 # target to preprocess a source file
-Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.i
-.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.i
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.i
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.i
 
-Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.s: Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.s
-.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.s
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.s: Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.s
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.s
 
 # target to generate assembly for a file
-Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.s
-.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.cpp.s
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.s
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.cpp.s
+
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.o: Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.o
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.o
+
+# target to build an object file
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.o
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.o
+
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.i: Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.i
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.i
+
+# target to preprocess a source file
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.i
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.i
+
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.s: Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.s
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.s
+
+# target to generate assembly for a file
+Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.s
+.PHONY : Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.cpp.s
 
 antlr4cpp_generated_src/QDSLLexer/QDSLLexer.o: antlr4cpp_generated_src/QDSLLexer/QDSLLexer.cpp.o
 .PHONY : antlr4cpp_generated_src/QDSLLexer/QDSLLexer.o
@@ -336,30 +360,6 @@ src/QODefinitionVisitor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/src/QODefinitionVisitor.cpp.s
 .PHONY : src/QODefinitionVisitor.cpp.s
 
-src/QOIndexVisitor.o: src/QOIndexVisitor.cpp.o
-.PHONY : src/QOIndexVisitor.o
-
-# target to build an object file
-src/QOIndexVisitor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/src/QOIndexVisitor.cpp.o
-.PHONY : src/QOIndexVisitor.cpp.o
-
-src/QOIndexVisitor.i: src/QOIndexVisitor.cpp.i
-.PHONY : src/QOIndexVisitor.i
-
-# target to preprocess a source file
-src/QOIndexVisitor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/src/QOIndexVisitor.cpp.i
-.PHONY : src/QOIndexVisitor.cpp.i
-
-src/QOIndexVisitor.s: src/QOIndexVisitor.cpp.s
-.PHONY : src/QOIndexVisitor.s
-
-# target to generate assembly for a file
-src/QOIndexVisitor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/QDSLParser.dir/build.make CMakeFiles/QDSLParser.dir/src/QOIndexVisitor.cpp.s
-.PHONY : src/QOIndexVisitor.cpp.s
-
 src/QOValidationVisitor.o: src/QOValidationVisitor.cpp.o
 .PHONY : src/QOValidationVisitor.o
 
@@ -420,9 +420,12 @@ help:
 	@echo "... antlr4_runtime-build_shared"
 	@echo "... antlr4_runtime-build_static"
 	@echo "... QDSLParser"
-	@echo "... Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.o"
-	@echo "... Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.i"
-	@echo "... Users/kevin/Documents/QTune/Pilot_Julia/src/general/StringTools.s"
+	@echo "... Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.o"
+	@echo "... Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.i"
+	@echo "... Users/kevin/Documents/QTune/Pilot_Julia/src/shared/IndexVisitor.s"
+	@echo "... Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.o"
+	@echo "... Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.i"
+	@echo "... Users/kevin/Documents/QTune/Pilot_Julia/src/shared/StringTools.s"
 	@echo "... antlr4cpp_generated_src/QDSLLexer/QDSLLexer.o"
 	@echo "... antlr4cpp_generated_src/QDSLLexer/QDSLLexer.i"
 	@echo "... antlr4cpp_generated_src/QDSLLexer/QDSLLexer.s"
@@ -441,9 +444,6 @@ help:
 	@echo "... src/QODefinitionVisitor.o"
 	@echo "... src/QODefinitionVisitor.i"
 	@echo "... src/QODefinitionVisitor.s"
-	@echo "... src/QOIndexVisitor.o"
-	@echo "... src/QOIndexVisitor.i"
-	@echo "... src/QOIndexVisitor.s"
 	@echo "... src/QOValidationVisitor.o"
 	@echo "... src/QOValidationVisitor.i"
 	@echo "... src/QOValidationVisitor.s"
