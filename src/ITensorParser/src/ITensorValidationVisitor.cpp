@@ -40,9 +40,7 @@ antlrcpp::Any qdsl::ITensorValidationVisitor::visitSimpleDefinition(QDSLParser::
   _operators.push_back( stripCurlyBraces( ctx->object->getText() ) );
   _currentIndices.clear();
 
-  for (auto definition : ctx->definitions) {
-    _operatorDefinitions.push_back(definition->getText());
-  }
+  _operatorDefinitions.push_back(ctx->definition->getText());
 
   return visitChildren(ctx);
 }
@@ -65,9 +63,7 @@ antlrcpp::Any qdsl::ITensorValidationVisitor::visitIndexedDefinition(QDSLParser:
   }
   _indicesRegister.push_back(_currentIndices);
 
-  for (auto definition : ctx->definitions) {
-    _indexedOperatorDefinitions.push_back(definition->getText());
-  }
+  _indexedOperatorDefinitions.push_back(ctx->definition->getText());
 
   return visitChildren(ctx);
 }

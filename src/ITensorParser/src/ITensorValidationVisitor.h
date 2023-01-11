@@ -39,8 +39,8 @@ public:
 
   std::vector<std::string> getParameters()       { return _parameters; }
   std::vector<std::string> getSubsystems()       { return _subsystems; }
-  std::vector<std::string> getOperators()        { return _operators; };
-  std::vector<std::string> getIndexedOperators() { return _indexedOperators; };
+  std::vector<std::string> getOperators()        { return _operators; }
+  std::vector<std::string> getIndexedOperators() { return _indexedOperators; }
   std::vector<std::string> getOperatorsDebug();
   std::vector<std::string> getIndexedOperatorsDebug();
 };

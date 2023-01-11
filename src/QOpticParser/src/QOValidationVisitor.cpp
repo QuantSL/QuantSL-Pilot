@@ -21,9 +21,9 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitSubsystems(QDSLParser::SubsystemsC
 
 
 antlrcpp::Any qdsl::QOValidationVisitor::visitDefinitionLine(qdsl::QDSLParser::DefinitionLineContext *ctx) {
-  std::string expressionName = ctx->simpleDefinition() != nullptr ?
+  std::string expressionName = stripCurlyBraces( ctx->simpleDefinition() != nullptr ?
     ctx->simpleDefinition()->object->getText() :
-    ctx->indexedDefinition()->object->getText();
+    ctx->indexedDefinition()->object->getText() );
 
   // Validate against redefinition
   if ( contains(_operators, expressionName) || contains(_indexedOperators, expressionName) ) {
@@ -40,9 +40,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitSimpleDefinition(QDSLParser::Simpl
   _operators.push_back( stripCurlyBraces( ctx->object->getText() ) );
   _currentIndices.clear();
 
-  for (auto definition : ctx->definitions) {
-    _operatorDefinitions.push_back(definition->getText());
-  }
+  _operatorDefinitions.push_back(ctx->definition->getText());
 
   return visitChildren(ctx);
 }
@@ -65,9 +63,7 @@ antlrcpp::Any qdsl::QOValidationVisitor::visitIndexedDefinition(QDSLParser::Inde
   }
   _indicesRegister.push_back(_currentIndices);
 
-  for (auto definition : ctx->definitions) {
-    _indexedOperatorDefinitions.push_back(definition->getText());
-  }
+  _indexedOperatorDefinitions.push_back(ctx->definition->getText());
 
   return visitChildren(ctx);
 }

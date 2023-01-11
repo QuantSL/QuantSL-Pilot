@@ -11,10 +11,10 @@ namespace qdsl {
 class ITensorDefinitionVisitor : public qdsl::QDSLParserBaseVisitor {
 private:
   const std::string _basisAndOperators = "\tindices = _generate_indices(parameters = parameters)\n"
-    "\opSum = OpSum()\n\n"
+    "\topSum = OpSum()\n\n"
     "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n";
   const std::string _basisAndOperatorsUser = "\tindices = _generate_indices(parameters = parameters)\n"
-    "\opSum = OpSum()\n\n"
+    "\topSum = OpSum()\n\n"
     "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n";
 
   std::string _definitions;
@@ -44,8 +44,8 @@ public:
   antlrcpp::Any visitSign(                QDSLParser::SignContext                 *ctx);
   antlrcpp::Any visitArithmethic(         QDSLParser::ArithmethicContext          *ctx);
 
-  std::string getDefinitions()     { return _definitions; };
-  std::string getUserDefinitions() { return _userDefinitions; };
+  std::string getDefinitions()     { return _definitions; }
+  std::string getUserDefinitions() { return _userDefinitions; }
   std::string generateOperatorContainer();
   std::string generateSystem();
 };

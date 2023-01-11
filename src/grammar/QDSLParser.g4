@@ -15,9 +15,8 @@ subsystemLine : SUBSYSTEM subsystems NEWLINE?;
 subsystems    : elements+=SYMBOLNAME (COMMA elements+=SYMBOLNAME)*;
 
 definitionLine    : simpleDefinition | indexedDefinition;
-simpleDefinition  : object=SYMBOLNAME          EQUAL definitions+=expression NEWLINE?;
-indexedDefinition : object=SYMBOLNAME botindex EQUAL definitions+=expression NEWLINE?;
-// TODO: 'definitions +=' to 'definition = '
+simpleDefinition  : object=SYMBOLNAME          EQUAL definition=expression NEWLINE?;
+indexedDefinition : object=SYMBOLNAME botindex EQUAL definition=expression NEWLINE?;
 
 expression           : (arithmeticExpression | sumExpression) (arithmethic (arithmeticExpression | sumExpression))*;
 sumExpression        : SUM boundary=sumindices ARGOPEN expression ARGCLOSE;

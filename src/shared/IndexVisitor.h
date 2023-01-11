@@ -31,8 +31,8 @@ public:
   antlrcpp::Any visitSumExpression(       QDSLParser::SumExpressionContext        *ctx);
   antlrcpp::Any visitElementaryExpression(QDSLParser::ElementaryExpressionContext *ctx);
 
-  std::string getIndexSampler() { return _indexSampler; };
-  std::vector<std::string> getSimpleOperators() { return _simpleOperatorGenerators; };
+  std::string getIndexSampler() { return _indexSampler; }
+  std::vector<std::string> getSimpleOperators() { return _simpleOperatorGenerators; }
 };
 
 } // namespace qdsl

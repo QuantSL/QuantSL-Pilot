@@ -42,8 +42,8 @@ public:
   antlrcpp::Any visitSign(                QDSLParser::SignContext                 *ctx);
   antlrcpp::Any visitArithmethic(         QDSLParser::ArithmethicContext          *ctx);
 
-  std::string getDefinitions()     { return _definitions; };
-  std::string getUserDefinitions() { return _userDefinitions; };
+  std::string getDefinitions()     { return _definitions; }
+  std::string getUserDefinitions() { return _userDefinitions; }
   std::string generateOperatorContainer();
   std::string generateSystem();
 };

@@ -472,8 +472,7 @@ public class QDSLParser extends Parser {
 
 	public static class SimpleDefinitionContext extends ParserRuleContext {
 		public Token object;
-		public ExpressionContext expression;
-		public List<ExpressionContext> definitions = new ArrayList<ExpressionContext>();
+		public ExpressionContext definition;
 		public TerminalNode EQUAL() { return getToken(QDSLParser.EQUAL, 0); }
 		public TerminalNode SYMBOLNAME() { return getToken(QDSLParser.SYMBOLNAME, 0); }
 		public ExpressionContext expression() {
@@ -497,8 +496,7 @@ public class QDSLParser extends Parser {
 			setState(81);
 			match(EQUAL);
 			setState(82);
-			((SimpleDefinitionContext)_localctx).expression = expression();
-			((SimpleDefinitionContext)_localctx).definitions.add(((SimpleDefinitionContext)_localctx).expression);
+			((SimpleDefinitionContext)_localctx).definition = expression();
 			setState(84);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
@@ -524,8 +522,7 @@ public class QDSLParser extends Parser {
 
 	public static class IndexedDefinitionContext extends ParserRuleContext {
 		public Token object;
-		public ExpressionContext expression;
-		public List<ExpressionContext> definitions = new ArrayList<ExpressionContext>();
+		public ExpressionContext definition;
 		public BotindexContext botindex() {
 			return getRuleContext(BotindexContext.class,0);
 		}
@@ -554,8 +551,7 @@ public class QDSLParser extends Parser {
 			setState(88);
 			match(EQUAL);
 			setState(89);
-			((IndexedDefinitionContext)_localctx).expression = expression();
-			((IndexedDefinitionContext)_localctx).definitions.add(((IndexedDefinitionContext)_localctx).expression);
+			((IndexedDefinitionContext)_localctx).definition = expression();
 			setState(91);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
