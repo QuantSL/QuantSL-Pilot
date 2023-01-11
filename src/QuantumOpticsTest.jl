@@ -6,6 +6,8 @@ function _generate_indices_from_n_test(i; parameters::Dict)
 	end
 
 	results = ()
+	results = results..., (:a, i)
+	results = results..., (:b, i)
 	return results
 end
 
@@ -15,6 +17,8 @@ function _generate_indices_from_n(i, j; parameters::Dict)
 	end
 
 		results = ()
+		results = results..., (i)
+		results = results..., (j)
 	return results
 end
 
@@ -40,6 +44,8 @@ function _generate_indices_from_H_hopping(; parameters::Dict)
 	results = ()
 	for i in [1:parameters[:N];]
 		for j in [1:parameters[:N];]
+			results = results..., (i)
+			results = results..., (j)
 		end
 	end
 	return results
@@ -74,12 +80,11 @@ function generate_n_test(; parameters::Dict)
 
 	indexDict = Dict(key => val for (val, key) in enumerate(indices))
 
-	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
-	operators = [σx, σy, σz, σp, σm]
+	operators = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
 
-	σx = _generate_σx(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
+	σx, σy, σz, σp, σm = operators
 
-	return (i) -> σx(:a, i) * σx(:b, i)
+	return (i) -> embed(basis, indexDict[(:a, i)], σx) * embed(basis, indexDict[(:b, i)], σx)
 end
 
 function generate_n(; parameters::Dict)
@@ -92,12 +97,11 @@ function generate_n(; parameters::Dict)
 
 	indexDict = Dict(key => val for (val, key) in enumerate(indices))
 
-	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
-	operators = [σx, σy, σz, σp, σm]
+	operators = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
 
-	σz = _generate_σz(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
+	σx, σy, σz, σp, σm = operators
 
-	return (i, j) -> σz(i) * σz(j)
+	return (i, j) -> embed(basis, indexDict[i], σz) * embed(basis, indexDict[j], σz)
 end
 
 function generate_H_int(; parameters::Dict)
@@ -110,8 +114,9 @@ function generate_H_int(; parameters::Dict)
 
 	indexDict = Dict(key => val for (val, key) in enumerate(indices))
 
-	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
-	operators = [σx, σy, σz, σp, σm]
+	operators = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+
+	σx, σy, σz, σp, σm = operators
 
 	n = _generate_n(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
 
@@ -132,14 +137,13 @@ function generate_H_hopping(; parameters::Dict)
 
 	indexDict = Dict(key => val for (val, key) in enumerate(indices))
 
-	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
-	operators = [σx, σy, σz, σp, σm]
+	operators = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
 
-	σx = _generate_σx(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
+	σx, σy, σz, σp, σm = operators
 
 	return parameters[:J] * sum(i -> 
 		sum(j -> 
-			σx(i) * σx(j), [1:parameters[:N];]
+			embed(basis, indexDict[i], σx) * embed(basis, indexDict[j], σx), [1:parameters[:N];]
 		), [1:parameters[:N];]
 	)
 end
@@ -154,8 +158,9 @@ function generate_H(; parameters::Dict)
 
 	indexDict = Dict(key => val for (val, key) in enumerate(indices))
 
-	σx, σy, σz, σp, σm = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
-	operators = [σx, σy, σz, σp, σm]
+	operators = [f(SpinBasis(1//2)) for f in (sigmax, sigmay, sigmaz, sigmap, sigmam)]
+
+	σx, σy, σz, σp, σm = operators
 
 	H_int = _generate_H_int(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
 	H_hopping = _generate_H_hopping(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
@@ -166,17 +171,13 @@ end
 function _generate_n_test(; basis, indexDict, operators, parameters::Dict)
 	σx, σy, σz, σp, σm = operators
 
-	σx = _generate_σx(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
-
-	return (i) -> σx(:a, i) * σx(:b, i)
+	return (i) -> embed(basis, indexDict[(:a, i)], σx) * embed(basis, indexDict[(:b, i)], σx)
 end
 
 function _generate_n(; basis, indexDict, operators, parameters::Dict)
 	σx, σy, σz, σp, σm = operators
 
-	σz = _generate_σz(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
-
-	return (i, j) -> σz(i) * σz(j)
+	return (i, j) -> embed(basis, indexDict[i], σz) * embed(basis, indexDict[j], σz)
 end
 
 function _generate_H_int(; basis, indexDict, operators, parameters::Dict)
@@ -194,11 +195,9 @@ end
 function _generate_H_hopping(; basis, indexDict, operators, parameters::Dict)
 	σx, σy, σz, σp, σm = operators
 
-	σx = _generate_σx(; basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)
-
 	return parameters[:J] * sum(i -> 
 		sum(j -> 
-			σx(i) * σx(j), [1:parameters[:N];]
+			embed(basis, indexDict[i], σx) * embed(basis, indexDict[j], σx), [1:parameters[:N];]
 		), [1:parameters[:N];]
 	)
 end

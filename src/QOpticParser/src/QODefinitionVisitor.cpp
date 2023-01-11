@@ -14,10 +14,12 @@ void qdsl::QODefinitionVisitor::_generateFunctionHeader(std::string operatorName
   // Generate function header and necessary objects, check parameters
   _definitions += "function _generate_" + operatorName + "(; basis, indexDict, operators, parameters::Dict)\n";
   _definitions += "\tσx, σy, σz, σp, σm = operators\n\n";
+  // parameter check occurs only when generating entire system
 
   _userDefinitions += "function generate_" + operatorName + "(; parameters::Dict)\n";
   _userDefinitions += _parameterCheck;
-  _userDefinitions += _basisAndOperatorsUser;
+  _userDefinitions += _basisAndOperators;
+  _userDefinitions += "\tσx, σy, σz, σp, σm = operators\n\n";
 }
 
 void qdsl::QODefinitionVisitor::_generateRequiredOperators() {

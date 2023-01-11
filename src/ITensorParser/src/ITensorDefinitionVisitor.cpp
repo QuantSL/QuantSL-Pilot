@@ -13,10 +13,11 @@ void qdsl::ITensorDefinitionVisitor::_generateParameterCheck() {
 void qdsl::ITensorDefinitionVisitor::_generateFunctionHeader(std::string operatorName) {
   // Generate function header and necessary objects, check parameters
   _definitions += "function _generate_" + operatorName + "(; indexDict, opSum, parameters::Dict)\n";
+  // parameter check occurs only when generating entire system
 
   _userDefinitions += "function generate_" + operatorName + "(; parameters::Dict)\n";
   _userDefinitions += _parameterCheck;
-  _userDefinitions += _basisAndOperatorsUser;
+  _userDefinitions += _basisAndOperators;
 }
 
 void qdsl::ITensorDefinitionVisitor::_generateRequiredOperators() {
@@ -190,7 +191,7 @@ std::string qdsl::ITensorDefinitionVisitor::generateSystem() {
   std::vector<std::string> operatorGenerators;
   for (auto operatorName : _operatorList) {
     operatorGenerators.push_back( "\n\t\t_generate_" + stripCurlyBraces(operatorName) +
-      "(basis = basis, indexDict = indexDict, operators = operators, parameters = parameters)" );
+      "(basis = basis, indexDict = indexDict, opSum = opSum, parameters = parameters)" );
   }
   generateSystem += separateByComma(operatorGenerators);
   generateSystem += "\n\t)\nend\n\n";

@@ -1,4 +1,4 @@
-// Generated from /Users/kevin/Documents/QTune/Pilot Julia/src/ITensorParser/grammar/QDSLLexer.g4 by ANTLR 4.9.2
+// Generated from /Users/kevin/Documents/QTune/Pilot Julia/src/grammar/QDSLLexer.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
