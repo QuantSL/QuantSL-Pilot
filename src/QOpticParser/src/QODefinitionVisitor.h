@@ -32,7 +32,6 @@ private:
   std::vector<std::string> _operatorList;
 
 public:
-  antlrcpp::Any visitMain(                QDSLParser::MainContext                 *ctx);
   antlrcpp::Any visitParameters(          QDSLParser::ParametersContext           *ctx);
   antlrcpp::Any visitSubsystems(          QDSLParser::SubsystemsContext           *ctx);
   antlrcpp::Any visitSimpleDefinition(    QDSLParser::SimpleDefinitionContext     *ctx);

@@ -35,12 +35,6 @@ void qdsl::QODefinitionVisitor::_generateRequiredOperators() {
   _userDefinitions += requiredOperators + "\n";
 }
 
-antlrcpp::Any qdsl::QODefinitionVisitor::visitMain(QDSLParser::MainContext *ctx) {
-  _definitions = "";
-
-  return visitChildren(ctx);
-}
-
 antlrcpp::Any qdsl::QODefinitionVisitor::visitParameters(QDSLParser::ParametersContext *ctx) {
   for (auto parameter : ctx->elements) {
     _parameters.push_back( stripCurlyBraces( parameter->getText() ) );
@@ -107,25 +101,21 @@ antlrcpp::Any qdsl::QODefinitionVisitor::visitSumExpression(QDSLParser::SumExpre
   std::string upperBound = ctx->boundary->topindex()->index->getText();
 
   // Sum open
-  std::string sumResult = "";
   for (int i = 0; i < indices.size(); i++) {
     _indentation += "\t";
-    sumResult += "sum(" + indices[i] + " -> \n" + _indentation;
+    _expression += "sum(" + indices[i] + " -> \n" + _indentation;
   }
-  _expression += sumResult;
 
   // Further Parse Tree
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
 
   // Sum close
-  sumResult = "";
   for (int i = 0; i < indices.size(); i++) {
     _indentation = _indentation.substr(1);
-    sumResult += ", [1:";
-    sumResult += isNumber(upperBound) ? upperBound + ";]\n" + _indentation + ")" :
+    _expression += ", [1:";
+    _expression += isNumber(upperBound) ? upperBound + ";]\n" + _indentation + ")" :
       "parameters[:" + upperBound + "];]\n" + _indentation + ")" ;
   }
-  _expression += sumResult;
 
   return visitedChildrenReturn;
 }
