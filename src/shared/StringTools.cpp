@@ -18,14 +18,12 @@ std::string qdsl::formatIndex(const std::vector<std::string> subsystems, std::st
   return index;
 }
 
-std::string qdsl::separateByComma(std::vector<std::string> strings) {
+std::string qdsl::separateBy(std::vector<std::string> strings, std::string separator) {
   std::string result = "";
   if ( strings.size() == 0 ) return result;
   
-  for (std::string string : strings) {
-    result += string + ", ";
-  }
-  return result.substr(0, result.size() - 2);
+  for (std::string string : strings) result += string + separator;
+  return result.substr(0, result.size() - separator.size());
 }
 
 std::vector<std::string> qdsl::stripCurlyBraces(std::vector<std::string> strings) {

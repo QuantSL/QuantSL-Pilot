@@ -125,8 +125,7 @@ antlrcpp::Any qdsl::QODefinitionVisitor::visitElementaryExpression(QDSLParser::E
   if (ctx->botindex() != nullptr) {
     for ( auto index : ctx->botindex()->indices ) {
       std::string indexName = index->getText();
-      if ( contains(_subsystems, indexName) ) indices.push_back(":" + indexName);
-      else indices.push_back(indexName);
+      indices.push_back( formatIndex(_subsystems, indexName) );
     }
   }
 
@@ -157,10 +156,8 @@ antlrcpp::Any qdsl::QODefinitionVisitor::visitSign(QDSLParser::SignContext *ctx)
 }
 
 antlrcpp::Any qdsl::QODefinitionVisitor::visitArithmethic(QDSLParser::ArithmethicContext *ctx) {
-  std::string arithmethicString = "";
-  if ( ctx->getText() == "^" ) arithmethicString += ctx->getText();
-  else arithmethicString += " " + ctx->getText() + " ";
-  _expression += arithmethicString;
+  if ( ctx->getText() == "^" ) _expression += ctx->getText();
+  else _expression += " " + ctx->getText() + " ";
 
   return visitChildren(ctx);
 }

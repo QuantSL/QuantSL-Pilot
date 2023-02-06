@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <stack>
 #include <string>
 
 #include <antlr4-runtime.h>
@@ -11,15 +12,17 @@ namespace qdsl {
 class ITensorDefinitionVisitor : public qdsl::QDSLParserBaseVisitor {
 private:
   const std::string _basisAndOperators = "\tindices = _generate_indices(parameters = parameters)\n"
-    "\topSum = OpSum()\n\n"
-    "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n";
-  const std::string _basisAndOperatorsUser = "\tindices = _generate_indices(parameters = parameters)\n"
-    "\topSum = OpSum()\n\n"
     "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n";
 
   std::string _definitions;
   std::string _userDefinitions;
   std::vector<std::string> _requiredOperators;
+  std::stack<std::vector<std::string>> _indicesStack;
+
+  std::vector<int> _arithmethicLocation;
+  std::vector<std::string> _expressionRegister;
+  std::vector<std::vector<std::string>> _arithmethicRegister;
+
   std::string _expression;
   std::string _indentation;
   void _generateFunctionHeader(std::string operatorName);
@@ -34,12 +37,13 @@ private:
   std::vector<std::string> _operatorList;
 
 public:
-  antlrcpp::Any visitMain(                QDSLParser::MainContext                 *ctx);
   antlrcpp::Any visitParameters(          QDSLParser::ParametersContext           *ctx);
   antlrcpp::Any visitSubsystems(          QDSLParser::SubsystemsContext           *ctx);
   antlrcpp::Any visitSimpleDefinition(    QDSLParser::SimpleDefinitionContext     *ctx);
   antlrcpp::Any visitIndexedDefinition(   QDSLParser::IndexedDefinitionContext    *ctx);
+  antlrcpp::Any visitExpression(          QDSLParser::ExpressionContext           *ctx);
   antlrcpp::Any visitSumExpression(       QDSLParser::SumExpressionContext        *ctx);
+  antlrcpp::Any visitArithmeticExpression(QDSLParser::ArithmeticExpressionContext *ctx);
   antlrcpp::Any visitElementaryExpression(QDSLParser::ElementaryExpressionContext *ctx);
   antlrcpp::Any visitSign(                QDSLParser::SignContext                 *ctx);
   antlrcpp::Any visitArithmethic(         QDSLParser::ArithmethicContext          *ctx);

@@ -1,4 +1,5 @@
 #include "ITensorDefinitionVisitor.h"
+#include <iostream>
 
 #include "../../shared/StringTools.h"
 
@@ -12,7 +13,7 @@ void qdsl::ITensorDefinitionVisitor::_generateParameterCheck() {
 
 void qdsl::ITensorDefinitionVisitor::_generateFunctionHeader(std::string operatorName) {
   // Generate function header and necessary objects, check parameters
-  _definitions += "function _generate_" + operatorName + "(; indexDict, opSum, parameters::Dict)\n";
+  _definitions += "function _generate_" + operatorName + "(; indexDict, parameters::Dict)\n";
   // parameter check occurs only when generating entire system
 
   _userDefinitions += "function generate_" + operatorName + "(; parameters::Dict)\n";
@@ -26,17 +27,11 @@ void qdsl::ITensorDefinitionVisitor::_generateRequiredOperators() {
   std::string requiredOperators = "";
   for (auto requiredOperator : _requiredOperators) {
     requiredOperators += "\t" + requiredOperator + " = _generate_" + requiredOperator +
-      "(; indexDict = indexDict, opSum = opSum, parameters = parameters)\n";
+      "(; indexDict = indexDict, parameters = parameters)\n";
   }
 
   _definitions     += requiredOperators + "\n";
   _userDefinitions += requiredOperators + "\n";
-}
-
-antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitMain(QDSLParser::MainContext *ctx) {
-  _definitions = "";
-
-  return visitChildren(ctx);
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitParameters(QDSLParser::ParametersContext *ctx) {
@@ -57,16 +52,22 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSubsystems(QDSLParser::Subsys
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSimpleDefinition(QDSLParser::SimpleDefinitionContext *ctx) {
+  _arithmethicLocation = std::vector<int>(1, 0);
+  _expressionRegister.clear();
+  _arithmethicRegister.clear();
+  _indicesStack.clear();
   _indentation = "\t"; _expression = ""; _requiredOperators.clear();
+
   std::string operatorName = stripCurlyBraces(ctx->object->getText());
   _operatorList.push_back(operatorName);
-
   _generateFunctionHeader(operatorName);
 
   // Generate function body
-  _expression += "\treturn ";
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  _expression += "\nend\n\n";
+  for (int i = _arithmethicRegister.size() - 1; i >= 0; i--) {
+    for (auto op : _arithmethicRegister[i]) _expression += op + "\n";
+  }
+  _expression += "\treturn OpSum() + " + _expressionRegister[0] + "\nend\n\n";
 
   // Generate required operators and add expression to definitions
   _generateRequiredOperators();
@@ -77,19 +78,24 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSimpleDefinition(QDSLParser::
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitIndexedDefinition(QDSLParser::IndexedDefinitionContext *ctx) {
+  _arithmethicLocation = std::vector<int>(1, 0);
+  _expressionRegister.clear();
+  _arithmethicRegister.clear();
+  _indicesStack.clear();
   _indentation = "\t"; _expression = ""; _requiredOperators.clear();
-  std::vector<std::string> indices;
-  for ( auto index : ctx->botindex()->indices ) indices.push_back(index->getText());
 
   std::string operatorName = stripCurlyBraces(ctx->object->getText());
   _operatorList.push_back(operatorName);
-
   _generateFunctionHeader(operatorName);
 
   // Generate function body
-  _expression += "\treturn (" + separateByComma(indices) + ") -> ";
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  _expression += "\nend\n\n";
+  for (int i = _arithmethicRegister.size() - 1; i >= 0; i--) {
+    for (auto op : _arithmethicRegister[i]) _expression += op + "\n";
+  }
+  stds::vector<std::string> argumentList = std::vector<std::string>();
+  for ( auto index : ctx->botindex()->indices ) argumentList.push_back(index->getText());
+  _expression += "\treturn (" + separateByComma(argumentList) + ") -> OpSum() + " + _expressionRegister[0] + "\nend\n\n";
 
   // Generate required operators and add expression to definitions
   _generateRequiredOperators();
@@ -99,33 +105,69 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitIndexedDefinition(QDSLParser:
   return visitedChildrenReturn;
 }
 
+antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitExpression(QDSLParser::ExpressionContext *ctx) {
+  _arithmethicRegister.push_back(std::vector<std::string>());
+  _indicesStack.push_back(std::vector<std::string>());
+
+  std::string prefix = separateByUnderscore<int>(_arithmethicLocation),
+    arguments = separateByComma(_argumentList);
+  prefix = prefix.substr(0, prefix.size() - 1);
+
+  _expressionRegister.push_back("os" + prefix + "1(" + arguments + ")");
+  for (int i = 0; i < ctx->arithmethic().size(); i++) {
+    _expressionRegister.back() += " " + ctx->arithmethic(i)->getText() + " " +
+      "os" + prefix + std::to_string(i + 2) + "(" + arguments + ")";
+  }
+
+  return visitChildren(ctx);
+}
+
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSumExpression(QDSLParser::SumExpressionContext *ctx) {
+  ++_arithmethicLocation.back();
+
   std::vector<std::string> indices;
   for ( auto index : ctx->boundary->botindex()->indices ) indices.push_back(index->getText());
   std::string upperBound = ctx->boundary->topindex()->index->getText();
 
   // Sum open
-  std::string sumResult = "";
+  _arithmethicRegister.back().push_back(
+    _indentation + "os" + separateByUnderscore<int>(_arithmethicLocation) + "(" +
+    separateByComma(_argumentList) + ") = OpSum() + "
+  );
   for (int i = 0; i < indices.size(); i++) {
     _indentation += "\t";
-    sumResult += "sum(" + indices[i] + " -> \n" + _indentation;
+    _arithmethicRegister.back().back() += "sum(" + indices[i] + " -> \n" + _indentation;
   }
-  _expression += sumResult;
 
-  // Further Parse Tree
+  // Sum body, Further Parse Tree
+  size_t currentPos = _arithmethicRegister.size() - 1;
+  _arithmethicLocation.push_back(0);
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
+  _arithmethicRegister[currentPos].back() += _expressionRegister.back();
+  std::cout << _expressionRegister.back() << std::endl;
+  _expressionRegister.pop_back();
+  _arithmethicLocation.pop_back();
 
   // Sum close
-  sumResult = "";
   for (int i = 0; i < indices.size(); i++) {
     _indentation = _indentation.substr(1);
-    sumResult += ", [1:";
-    sumResult += isNumber(upperBound) ? upperBound + ";]\n" + _indentation + ")" :
-      "parameters[:" + upperBound + "];]\n" + _indentation + ")" ;
+    _arithmethicRegister[currentPos].back() += ", [1:" +
+      (isNumber(upperBound) ? upperBound : "parameters[:" + upperBound + "]") +
+      ";]\n" + _indentation + ")";
   }
-  _expression += sumResult;
 
   return visitedChildrenReturn;
+}
+
+antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitArithmeticExpression(QDSLParser::ArithmeticExpressionContext *ctx){
+  ++_arithmethicLocation.back();
+
+  _arithmethicRegister.back().push_back(
+    _indentation + "os" + separateByUnderscore<int>(_arithmethicLocation) + "(" +
+    separateByComma(_argumentList) + ") = OpSum() + "
+  );
+
+  return visitChildren(ctx);
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitElementaryExpression(QDSLParser::ElementaryExpressionContext *ctx) {
@@ -133,42 +175,46 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitElementaryExpression(QDSLPars
   if (ctx->botindex() != nullptr) {
     for ( auto index : ctx->botindex()->indices ) {
       std::string indexName = index->getText();
-      if ( contains(_subsystems, indexName) ) indices.push_back(":" + indexName);
-      else indices.push_back(indexName);
+      indices.push_back( formatIndex(_subsystems, indexName) );
     }
   }
 
-  if ( ctx->SIGMA() != nullptr ) {
-    _expression += "embed(basis, indexDict[";
-    if      ( indices.size() == 0 ) _expression += "1], σ";
-    else if ( indices.size() == 1 ) _expression += indices[0] + "], σ";
-    else                            _expression += "(" + separateByComma(indices) + ")], σ";
-    _expression += ctx->SIGMA()->getText().back(); _expression += ")";
+  std::string expression("");
+  if (ctx->SIGMA() != nullptr) {
+    expression += std::string() + "Op(\"S" + ctx->SIGMA()->getText().back() + "\", indexDict[";
+    if      ( indices.size() == 0 ) expression += "1])";
+    else if ( indices.size() == 1 ) expression += indices[0] + "])";
+    else                            expression += "(" + separateByComma(indices) + ")])";
   }
-  else if ( ctx->SYMBOLNAME() != nullptr ) {
+  else if ((ctx->SYMBOLNAME() != nullptr)) {
     std::string symbolName = stripCurlyBraces( ctx->SYMBOLNAME()->getText() );
-    if ( contains(_parameters, symbolName) ) _expression += "parameters[:" + symbolName + "]";
+    if ( contains(_parameters, symbolName) ) expression += "parameters[:" + symbolName + "]";
     else {
       if ( !contains(_requiredOperators, symbolName) ) _requiredOperators.push_back(symbolName);
-      _expression += symbolName;
-      if ( !indices.empty() ) _expression += "(" + separateByComma(indices) + ")";
+      expression += symbolName;
+      if ( !indices.empty() ) expression += "(" + separateByComma(indices) + ")";
     }
   }
+  else {
+    expression += "(";
+    antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
+    // TODO: here shall be the operator sums of the children
+    expression += ")";
+    return visitedChildrenReturn;
+  }
 
+  _arithmethicRegister.back().back() += expression;
   return visitChildren(ctx);
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSign(QDSLParser::SignContext *ctx) {
-  _expression += ctx->getText() + " ";
-
+  if ( ctx->SUB() != nullptr ) _arithmethicRegister.back().back() += "-1 * ";
   return visitChildren(ctx);
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitArithmethic(QDSLParser::ArithmethicContext *ctx) {
-  std::string arithmethicString = "";
-  if ( ctx->getText() == "^" ) arithmethicString += ctx->getText();
-  else arithmethicString += " " + ctx->getText() + " ";
-  _expression += arithmethicString;
+  if ( ctx->getText() == "^" ) _arithmethicRegister.back().back() += ctx->getText();
+  else _arithmethicRegister.back().back() += " " + ctx->getText() + " ";
 
   return visitChildren(ctx);
 }
@@ -191,7 +237,7 @@ std::string qdsl::ITensorDefinitionVisitor::generateSystem() {
   std::vector<std::string> operatorGenerators;
   for (auto operatorName : _operatorList) {
     operatorGenerators.push_back( "\n\t\t_generate_" + stripCurlyBraces(operatorName) +
-      "(basis = basis, indexDict = indexDict, opSum = opSum, parameters = parameters)" );
+      "(basis = basis, indexDict = indexDict, parameters = parameters)" );
   }
   generateSystem += separateByComma(operatorGenerators);
   generateSystem += "\n\t)\nend\n\n";
