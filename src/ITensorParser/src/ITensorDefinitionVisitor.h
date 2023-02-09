@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <stack>
 #include <string>
 
 #include <antlr4-runtime.h>
@@ -9,28 +8,41 @@
 
 namespace qdsl {
 
+struct ArithmeticExpression {
+  std::vector<int> identifier;
+  std::vector<std::string> parameters;
+  std::string expression;
+  std::string separator;
+
+  ArithmeticExpression(std::vector<int> _identifier) : identifier(_identifier), expression("OpSum() + ") {}
+};
+
 class ITensorDefinitionVisitor : public qdsl::QDSLParserBaseVisitor {
 private:
   const std::string _basisAndOperators = "\tindices = _generate_indices(parameters = parameters)\n"
     "\tindexDict = Dict(key => val for (val, key) in enumerate(indices))\n\n";
 
+  enum class ParseMode { expressionParse, arithmeticParse } mode;
+
+  std::string _code;
   std::string _definitions;
   std::string _userDefinitions;
   std::vector<std::string> _requiredOperators;
-  std::stack<std::vector<std::string>> _indicesStack;
 
-  std::vector<int> _arithmethicLocation;
+  std::vector<int> _arithmeticLocation;
   std::vector<std::string> _expressionRegister;
-  std::vector<std::vector<std::string>> _arithmethicRegister;
-
-  std::string _expression;
-  std::string _indentation;
-  void _generateFunctionHeader(std::string operatorName);
-  void _generateRequiredOperators();
+  std::vector<std::string> _argumentList;
+  std::vector<std::vector<ArithmeticExpression>> _arithmeticRegister;
 
   std::vector<std::string> _parameters;
   std::string _parameterCheck;
   void _generateParameterCheck();
+
+  void _newExpressionSetup();
+  void _generateExpression();
+  void _generateDefinition();
+  void _generateFunctionHeader(std::string operatorName);
+  void _generateRequiredOperators();
 
   std::vector<std::string> _subsystems;
 

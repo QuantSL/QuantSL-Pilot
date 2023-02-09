@@ -3,6 +3,7 @@ authors = ["Kleinbeck, Kevin"]
 
 [deps]
 DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
+ITensors = "9136182c-28ba-11e9-034c-db9fb085ebd5"
 QuantumOptics = "6e0679c1-51ea-5a7c-ac74-d61b76210b0c"
 
 [compat]

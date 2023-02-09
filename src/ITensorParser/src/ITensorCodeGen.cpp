@@ -10,7 +10,7 @@ int qdsl::generateCode(std::string filename, QDSLParser &parser) {
   std::ofstream file;
   file.open(filename);
 
-  file << "using ITensor\n\n";
+  file << "using ITensors\n\n";
 
   // Generate code to sample indices from each definition
   parser.reset();

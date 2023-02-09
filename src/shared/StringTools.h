@@ -26,6 +26,7 @@ std::string separateByComma<std::string>(     std::vector<std::string> vec) {ret
 template<> inline
 std::string separateByUnderscore<std::string>(std::vector<std::string> vec) {return separateBy(vec, "_");}
 
+void addUnique(std::vector<std::string> &target, std::vector<std::string> inputs);
 
 std::vector<std::string> stripCurlyBraces(std::vector<std::string> strings);
 std::string stripCurlyBraces(std::string string);

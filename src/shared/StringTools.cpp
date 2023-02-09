@@ -26,6 +26,12 @@ std::string qdsl::separateBy(std::vector<std::string> strings, std::string separ
   return result.substr(0, result.size() - separator.size());
 }
 
+void qdsl::addUnique(std::vector<std::string> &target, std::vector<std::string> inputs) {
+  for (std::string input : inputs) {
+    if ( !contains(target, input) ) target.push_back(input);
+  }
+}
+
 std::vector<std::string> qdsl::stripCurlyBraces(std::vector<std::string> strings) {
   std::vector<std::string> strippedStrings;
   for (auto string : strings) strippedStrings.push_back(stripCurlyBraces(string));
