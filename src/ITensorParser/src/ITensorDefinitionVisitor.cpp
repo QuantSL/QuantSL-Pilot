@@ -1,4 +1,5 @@
 #include "ITensorDefinitionVisitor.h"
+#include <iostream>
 
 #include "../../shared/StringTools.h"
 
@@ -10,36 +11,36 @@ void qdsl::ITensorDefinitionVisitor::_generateParameterCheck() {
     "\tend\n\n");
 }
 
-void qdsl::ITensorDefinitionVisitor::_newExpressionSetup() {
+void qdsl::ITensorDefinitionVisitor::_newExpressionSetup(std::string operatorName) {
   _arithmeticLocation.clear();
-  _expressionRegister.clear();
   _arithmeticRegister.clear();
   _code = ""; _requiredOperators.clear();
+
+  _operatorList.push_back(operatorName);
+  _generateFunctionHeader(operatorName);
 }
 
-void qdsl::ITensorDefinitionVisitor::_generateExpression() {
-  _expressionRegister.push_back("");
-  _argumentList.clear();
-  std::string indexedOperatorSum;
+std::string qdsl::ITensorDefinitionVisitor::_generateIntermediateExpression() {
+  _argumentList.clear(); hasIntermediates = true;
+  std::string intermediateExpression = "";
 
-  for (auto arithmeticExpression : _arithmeticRegister.back()) {
+  ArithmeticExpression arithmeticExpression = _arithmeticRegister.back();
+  intermediateExpression += "os" + separateByUnderscore(arithmeticExpression.identifier);
+  if ( !arithmeticExpression.parameters.empty() ) {
+    intermediateExpression += "(" + separateByComma(arithmeticExpression.parameters) + ")";
     addUnique(_argumentList, arithmeticExpression.parameters);
-    indexedOperatorSum = "os" + separateByUnderscore(arithmeticExpression.identifier);
-    if ( !arithmeticExpression.parameters.empty() ) {
-      indexedOperatorSum += "(" + separateByComma(arithmeticExpression.parameters) + ")";
-    }
-    _expressionRegister.back() += indexedOperatorSum + arithmeticExpression.separator;
-    _code += "\t" + indexedOperatorSum + " = OpSum() + " + arithmeticExpression.expression + "\n";
   }
+  _code += "\t" + intermediateExpression + " = " + arithmeticExpression.expression + "\n";
 
   _arithmeticRegister.pop_back();
+  return intermediateExpression;
 }
 
 void qdsl::ITensorDefinitionVisitor::_generateDefinition() {
   _generateRequiredOperators();
-  _code += "\treturn ";
+  _code += hasIntermediates ? "\n\treturn " : "\treturn ";
   if ( !_argumentList.empty() ) _code += "(" + separateByComma(_argumentList) + ") -> ";
-  _code += "OpSum() + " + _expressionRegister[0] + "\nend\n\n";
+  _code += _arithmeticRegister[0].expression + "\nend\n\n";
   _definitions     += _code;
   _userDefinitions += _code;
 }
@@ -60,11 +61,11 @@ void qdsl::ITensorDefinitionVisitor::_generateRequiredOperators() {
   std::string requiredOperators = "";
   for (auto requiredOperator : _requiredOperators) {
     requiredOperators += "\t" + requiredOperator + " = _generate_" + requiredOperator +
-      "(; indexDict = indexDict, parameters = parameters)\n";
+      "(; indexDict = indexDict, parameters = parameters)\n\n";
   }
 
-  _definitions     += requiredOperators + "\n";
-  _userDefinitions += requiredOperators + "\n";
+  _definitions     += requiredOperators;
+  _userDefinitions += requiredOperators;
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitParameters(QDSLParser::ParametersContext *ctx) {
@@ -85,88 +86,67 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSubsystems(QDSLParser::Subsys
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSimpleDefinition(QDSLParser::SimpleDefinitionContext *ctx) {
-  _newExpressionSetup();
-
-  std::string operatorName = stripCurlyBraces(ctx->object->getText());
-  _operatorList.push_back(operatorName);
-  _generateFunctionHeader(operatorName);
+  _newExpressionSetup( stripCurlyBraces(ctx->object->getText()) );
 
   // Generate function body
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  // _argumentList.clear();
+  _argumentList.clear();
   _generateDefinition();
   return visitedChildrenReturn;
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitIndexedDefinition(QDSLParser::IndexedDefinitionContext *ctx) {
-  _newExpressionSetup();
-
-  std::string operatorName = stripCurlyBraces(ctx->object->getText());
-  _operatorList.push_back(operatorName);
-  _generateFunctionHeader(operatorName);
+  _newExpressionSetup( stripCurlyBraces(ctx->object->getText()) );
 
   // Generate function body
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  // _argumentList.clear();
-  // for ( auto index : ctx->botindex()->indices ) _argumentList.push_back(index->getText());
+  _argumentList.clear();
+  for ( auto index : ctx->botindex()->indices ) _argumentList.push_back( index->getText() );
   _generateDefinition();
   return visitedChildrenReturn;
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitExpression(QDSLParser::ExpressionContext *ctx) {
-  _arithmeticLocation.push_back(0);
-  _arithmeticRegister.push_back(std::vector<ArithmeticExpression>());
-  mode = ParseMode::expressionParse;
+  _arithmeticLocation.push_back(1);
+  _arithmeticRegister.push_back(ArithmeticExpression(_arithmeticLocation));
 
-  antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  _generateExpression();
-  return visitedChildrenReturn;
+  return visitChildren(ctx);
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSumExpression(QDSLParser::SumExpressionContext *ctx) {
-  ++_arithmeticLocation.back();
-
   std::vector<std::string> indices;
   for ( auto index : ctx->boundary->botindex()->indices ) indices.push_back(index->getText());
   std::string upperBound = ctx->boundary->topindex()->index->getText();
 
   // Sum open
-  _arithmeticRegister.back().push_back( ArithmeticExpression(_arithmeticLocation) );
   std::string indentation("\t");
   for (int i = 0; i < indices.size(); i++) {
     indentation += "\t";
-    _arithmeticRegister.back().back().expression += "sum(" + indices[i] + " -> \n" + indentation;
+    _arithmeticRegister.back().expression += "sum(" + indices[i] + " -> \n" + indentation;
   }
 
   // Sum body, Further Parse Tree
   antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  _arithmeticRegister.back().back().expression += _expressionRegister.back();
+  _arithmeticRegister.back().expression += _generateIntermediateExpression();
   for ( auto argument : _argumentList ) {
-    if ( !contains(indices, argument) ) _arithmeticRegister.back().back().parameters.push_back(argument);
+    if ( !contains(indices, argument) ) _arithmeticRegister.back().parameters.push_back(argument);
   }
-  _expressionRegister.pop_back();
-  _arithmeticLocation.pop_back();
 
   // Sum close
   for (int i = 0; i < indices.size(); i++) {
     indentation = indentation.substr(1);
-    _arithmeticRegister.back().back().expression += ", [1:" +
+    _arithmeticRegister.back().expression += ", [1:" +
       (isNumber(upperBound) ? upperBound : "parameters[:" + upperBound + "]") +
       ";]\n" + indentation + ")";
   }
 
+  ++_arithmeticLocation.back();
   return visitedChildrenReturn;
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitArithmeticExpression(QDSLParser::ArithmeticExpressionContext *ctx){
   ++_arithmeticLocation.back();
-  mode = ParseMode::arithmeticParse;
-
-  _arithmeticRegister.back().push_back( ArithmeticExpression(_arithmeticLocation) );
-
-  antlrcpp::Any visitedChildrenReturn = visitChildren(ctx);
-  mode = ParseMode::expressionParse;
-  return visitedChildrenReturn;
+  return visitChildren(ctx);
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitElementaryExpression(QDSLParser::ElementaryExpressionContext *ctx) {
@@ -174,9 +154,9 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitElementaryExpression(QDSLPars
   if (ctx->botindex() != nullptr) {
     for ( auto index : ctx->botindex()->indices ) {
       std::string indexName = index->getText();
-      if ( !contains(_arithmeticRegister.back().back().parameters, indexName) &&
+      if ( !contains(_arithmeticRegister.back().parameters, indexName) &&
            !contains(_subsystems, indexName) ) {
-        _arithmeticRegister.back().back().parameters.push_back(indexName);
+        _arithmeticRegister.back().parameters.push_back(indexName);
       }
       indices.push_back(formatIndex(_subsystems, indexName));
     }
@@ -206,24 +186,19 @@ antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitElementaryExpression(QDSLPars
     return visitedChildrenReturn;
   }
 
-  _arithmeticRegister.back().back().expression += expression;
+  _arithmeticRegister.back().expression += expression;
   return visitChildren(ctx);
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitSign(QDSLParser::SignContext *ctx) {
-  if ( ctx->SUB() != nullptr ) _arithmeticRegister.back().back().expression += "-1 * ";
+  if ( ctx->SUB() != nullptr ) _arithmeticRegister.back().expression += "-1 * ";
   return visitChildren(ctx);
 }
 
 antlrcpp::Any qdsl::ITensorDefinitionVisitor::visitArithmethic(QDSLParser::ArithmethicContext *ctx) {
-  if ( mode == ParseMode::expressionParse ) {
-    if ( ctx->getText() == "^" ) _arithmeticRegister.back().back().separator += ctx->getText();
-    else _arithmeticRegister.back().back().separator += " " + ctx->getText() + " ";
-  }
-  else if ( mode == ParseMode::arithmeticParse ) {
-    if ( ctx->getText() == "^" ) _arithmeticRegister.back().back().expression += ctx->getText();
-    else _arithmeticRegister.back().back().expression += " " + ctx->getText() + " ";
-  }
+  if ( ctx->getText() == "^" ) _arithmeticRegister.back().expression += "^";
+  else if ( ctx->getText() == "*" ) _arithmeticRegister.back().expression += " × "; // Custom Operator defined in 'CodeGen.cpp'
+  else _arithmeticRegister.back().expression += " " + ctx->getText() + " ";
   return visitChildren(ctx);
 }
 
