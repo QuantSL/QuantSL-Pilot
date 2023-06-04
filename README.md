@@ -1,7 +1,6 @@
 # QuantSL
 
-[![](https://img.shields.io/badge/docs-dev-blue.svg)]([https://KKleinbeck.github.io/ChiralWaveguide.jl/dev](https://quantsl.github.io/QuantSL-Pilot/dev/))
-<!-- [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://KKleinbeck.github.io/ChiralWaveguide.jl/stable) -->
+[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://quantsl.github.io/QuantSL-Pilot/dev/)
 
 *QuantSL* is a domain-specific language (DSL) that enables a natural description of diverse quantum systems.
 The goals of this project encompass:
